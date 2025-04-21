@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   font-family: 'Noto Serif', serif;
@@ -89,6 +89,82 @@ const ProductPrice = styled.p`
   font-weight: bold;
 `;
 
+const Navbar = styled.nav`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.6); /* semi-transparent for overlay effect */
+  backdrop-filter: blur(10px); /* adds a modern frosted glass feel */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  color: #fff;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #f0a500;
+    }
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .menu {
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const Footer = styled.footer`
+  background: #0d0d0d;
+  color: #fff;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  .footer-links {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    a {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #f0a500;
+      }
+    }
+  }
+
+  .copyright {
+    margin-top: 1rem;
+    opacity: 0.6;
+  }
+`;
+
+
+
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
@@ -127,7 +203,15 @@ const HomePage = () => {
 
   return (
     <Container>
-      <Navbar />
+      {/* <Navbar /> */}
+      <Navbar>
+        <div className="logo">MySite</div>
+        <div className="menu">
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </Navbar>
       <Hero>
         <Sub>FRAGRANCE THAT DEFINE YOU</Sub>
         <Title>The Perfect Fragrance For You</Title>
@@ -148,7 +232,17 @@ const HomePage = () => {
           </Card>
         ))}
       </ProductGrid>
-      <Footer />
+      {/* <Footer /> */}
+      <Footer>
+        <div className="footer-links">
+          <a href="#privacy">Privacy Policy</a>
+          <a href="#terms">Terms of Service</a>
+          <a href="#support">Support</a>
+        </div>
+        <div className="copyright">
+          &copy; {new Date().getFullYear()} MySite. All rights reserved.
+        </div>
+      </Footer>
     </Container>
   );
 };

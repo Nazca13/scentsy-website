@@ -1,9 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+const LoaderOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 15, 15, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+`;
+
+const LoaderWrapper = styled.div`
+  width: 80px;
+  height: 80px;
+`;
+
+const Loader = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 6px solid transparent;
+  border-top: 6px solid #d6b341;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    border: 4px solid #ffffff10;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #d6b34150;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 const Container = styled.div`
-  font-family: 'Noto Serif', serif;
+  font-family: "Noto Serif", serif;
   background-color: black;
   color: white;
   width: 100%;
@@ -11,7 +63,8 @@ const Container = styled.div`
 `;
 
 const Hero = styled.section`
-  background: url('/images/home-hero.png') center center/cover no-repeat;
+  background: url("/images/background landing.png") center center/cover
+    no-repeat;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -27,7 +80,7 @@ const Title = styled.h1`
 
 const Sub = styled.p`
   font-size: 14px;
-  color: #D6B341;
+  color: #d6b341;
 `;
 
 const ButtonGroup = styled.div`
@@ -37,9 +90,9 @@ const ButtonGroup = styled.div`
 `;
 
 const Button = styled.button`
-  background: ${(props) => (props.primary ? '#D6B341' : 'transparent')};
-  color: ${(props) => (props.primary ? '#000' : '#fff')};
-  border: ${(props) => (props.primary ? 'none' : '1px solid white')};
+  background: ${(props) => (props.primary ? "#D6B341" : "transparent")};
+  color: ${(props) => (props.primary ? "#000" : "#fff")};
+  border: ${(props) => (props.primary ? "none" : "1px solid white")};
   padding: 12px 30px;
   cursor: pointer;
   font-weight: bold;
@@ -47,202 +100,398 @@ const Button = styled.button`
   transition: 0.3s;
 
   &:hover {
-    background: ${(props) => (props.primary ? '#b8912f' : '#fff')};
+    background: ${(props) => (props.primary ? "#b8912f" : "#fff")};
     color: #000;
   }
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 28px;
   text-align: center;
-  margin: 60px 0 30px;
+  margin: 60px 0 10px;
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 198px;
+    height: 3px;
+    background-color: #d6b341;
+    margin: 8px auto 0;
+  }
 `;
 
 const ProductGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  padding: 0 60px 60px;
+  grid-template-columns: repeat(3, auto);
+  column-gap: 36px;
+  row-gap: 30px;
+  padding: 40px 80px;
+  justify-content: center;
 `;
 
 const Card = styled.div`
-  background: #1a1a1a;
-  border-radius: 10px;
+  background: #1d1d1c;
+  border-radius: 8px;
   overflow: hidden;
-  padding: 20px;
-  text-align: center;
+  color: white;
+  box-shadow: 0 0 6px rgba(214, 179, 65, 0.25);
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+  width: 220px;
+`;
+
+const ProductImageWrapper = styled.div`
+  position: relative;
+  border: 1.5px solid #d6b341;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 90%;
+  height: 90%;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+  background-color: #000;
 `;
 
 const ProductImage = styled.img`
   width: 100%;
-  height: auto;
-  margin-bottom: 20px;
+  height: 100%;
+  object-fit: contain;
 `;
 
-const ProductName = styled.h3`
-  color: #fff;
-  font-size: 18px;
-`;
-
-const ProductPrice = styled.p`
-  color: #D6B341;
+const DiscountBadge = styled.div`
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: red;
+  color: white;
   font-weight: bold;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
 `;
 
-const Navbar = styled.nav`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.6); /* semi-transparent for overlay effect */
-  backdrop-filter: blur(10px); /* adds a modern frosted glass feel */
+const ProductInfo = styled.div`
+  padding: 6px 8px;
+`;
+
+const ProductName = styled.h6`
+  color: #d6b341;
+  font-size: 12px;
+  margin: 0;
+  text-align: left;
+`;
+
+const ProductDescription = styled.p`
+  font-size: 9px;
+  color: #ccc;
+  margin: 2px 0;
+  text-align: left;
+`;
+
+const DescriptionRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 1000;
-  color: #fff;
+  margin-top: 2px;
+  margin-bottom: 6px;
+`;
 
-  a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 1rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
+const ProductVolume = styled.div`
+  font-size: 9px;
+  color: #ccc;
+  text-align: right;
+`;
 
-    &:hover {
-      color: #f0a500;
-    }
-  }
+const Rating = styled.div`
+  color: red;
+  font-size: 9px;
+  margin-bottom: 6px;
 
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-
-  .menu {
-    display: flex;
-    align-items: center;
+  span {
+    color: red;
   }
 `;
 
-const Footer = styled.footer`
-  background: #0d0d0d;
-  color: #fff;
-  padding: 2rem 1rem;
-  text-align: center;
-  font-size: 0.9rem;
+const BottomWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 8px 10px;
+`;
 
+const OldPrice = styled.div`
+  color: #888;
+  text-decoration: line-through;
+  font-size: 8px;
+`;
+
+const NewPrice = styled.div`
+  color: #d6b341;
+  font-weight: bold;
+  font-size: 11px;
+`;
+
+const BuyButton = styled.button`
+  background: #d6b341;
+  color: #000;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 1px;
+  font-weight: bold;
+  font-size: 9px;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #b8912f;
+  }
+`;
+
+const MagazineSection = styled.section`
+  padding: 60px 80px;
+`;
+
+const MagazineTitle = styled.h2`
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 292px;
+    height: 3px;
+    background-color: #d6b341;
+    margin: 8px auto 0;
+  }
+`;
+
+const MagazineGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 5px;
+  row-gap: 40px;
+  margin-top: 52px;
+`;
+
+const MagazineCard = styled.div`
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-
-  .footer-links {
-    margin-top: 1rem;
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    a {
-      color: #ccc;
-      text-decoration: none;
-      transition: color 0.3s ease;
-
-      &:hover {
-        color: #f0a500;
-      }
-    }
-  }
-
-  .copyright {
-    margin-top: 1rem;
-    opacity: 0.6;
-  }
 `;
 
+const MagazineImage = styled.img`
+  width: 100%;
+  height: 320px;
+  object-fit: contain;
+  border-radius: 8px;
+`;
 
+const MagazineContent = styled.div`
+  padding: 20px;
+`;
+
+const MagazineHeadline = styled.h3`
+  font-size: 24px;
+  color: #fafafa;
+  margin-bottom: 1px;
+  width: 75%;
+  margin-left: 76px;
+`;
+
+const MagazineText = styled.p`
+  font-size: 12px;
+  color: #a09e9e;
+  line-height: 1.4;
+  width: 72%;
+  margin-left: 76px;
+
+  a {
+    color: #d6b341;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+    opacity: 100%;
+
+    &:hover {
+      color: #b8912f;
+    }
+  }
+`;
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const dummyData = [
       {
-        _id: "1",
-        name: "Amber Woods",
-        description: "Warm, woody and subtly spicy fragrance.",
-        price: 39.99,
-        image: "/images/amber-woods.jpg",
+        _id: "bloom-opsidian",
+        name: "Bloom Opsidian EDP",
+        description: "Bold, Rare, Exotic",
+        price: 208.0,
+        originalPrice: 278.0,
+        discount: "-25%",
+        rating: 4.9,
+        ratingCount: 634,
+        image: "/images/parfumes/BLOOM OPSIDIAN.png",
+        volume: "125 ml",
       },
       {
-        _id: "2",
-        name: "Citrus Bloom",
-        description: "Fresh and energizing citrus scent.",
-        price: 29.99,
-        image: "/images/citrus-bloom.jpg",
+        _id: "crimson-elan",
+        name: "crimson-elan",
+        description: "Sensuous, Confident, Bold",
+        price: 160.0,
+        originalPrice: 198.0,
+        discount: "-20%",
+        rating: 4.8,
+        ratingCount: 410,
+        image: "/images/parfumes/Crimson Elan.png",
+        volume: "75 ml",
       },
       {
-        _id: "3",
-        name: "Midnight Oud",
-        description: "Bold and luxurious for evening wear.",
-        price: 49.99,
-        image: "/images/midnight-oud.jpg",
+        _id: "cuir-dor",
+        name: "Cuir D.OR",
+        description: "Exquisite, Signature, Rich",
+        price: 138.0,
+        originalPrice: 172.0,
+        discount: "-20%",
+        rating: 4.7,
+        ratingCount: 390,
+        image: "/images/parfumes/cuir d.or.png",
+        volume: "90 ml",
+      },
+      {
+        _id: "royale-saphir",
+        name: "Royale Saphir",
+        description: "Bright, Clean, Refined",
+        price: 148.0,
+        originalPrice: 165.0,
+        discount: "-10%",
+        rating: 4.6,
+        ratingCount: 200,
+        image: "/images/parfumes/Royale Saphir.png",
+        volume: "90 ml",
+      },
+      {
+        _id: "riche-essence",
+        name: "Riche Essence",
+        description: "Elegant, Subtle, Warm",
+        price: 120.0,
+        originalPrice: 145.0,
+        discount: "-15%",
+        rating: 4.8,
+        ratingCount: 320,
+        image: "/images/parfumes/Riche Essence.png",
+        volume: "100 ml",
       },
     ];
-    setProducts(dummyData);
 
-    // Uncomment if backend ready:
-    // axios.get('http://localhost:5000/api/products')
-    //   .then(res => setProducts(res.data))
-    //   .catch(err => console.error(err));
+    setProducts(dummyData);
+    setLoading(false);
   }, []);
 
   return (
     <Container>
-      {/* <Navbar /> */}
-      <Navbar>
-        <div className="logo">MySite</div>
-        <div className="menu">
-          <a href="#about">About</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </Navbar>
-      <Hero>
-        <Sub>FRAGRANCE THAT DEFINE YOU</Sub>
-        <Title>The Perfect Fragrance For You</Title>
-        <ButtonGroup>
-          <Button primary onClick={() => navigate('/shop')}>EXPLORE MORE</Button>
-          <Button onClick={() => navigate('/shop')}>BUY NOW</Button>
-        </ButtonGroup>
-      </Hero>
-      <SectionTitle>NEW ARRIVAL</SectionTitle>
-      <ProductGrid>
-        {products.map(product => (
-          <Card key={product._id}>
-            <ProductImage src={product.image} alt={product.name} />
-            <ProductName>{product.name}</ProductName>
-            <p>{product.description}</p>
-            <ProductPrice>${product.price}</ProductPrice>
-            <Button primary onClick={() => navigate(`/product/${product._id}`)}>BUY NOW</Button>
-          </Card>
-        ))}
-      </ProductGrid>
-      {/* <Footer /> */}
-      <Footer>
-        <div className="footer-links">
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms of Service</a>
-          <a href="#support">Support</a>
-        </div>
-        <div className="copyright">
-          &copy; {new Date().getFullYear()} MySite. All rights reserved.
-        </div>
-      </Footer>
+      {loading ? (
+        <LoaderOverlay>
+          <LoaderWrapper>
+            <Loader />
+          </LoaderWrapper>
+        </LoaderOverlay>
+      ) : (
+        <>
+          <Navbar />
+          <Hero>
+            <Title>Discover the Essence of Luxury</Title>
+            <Sub>Exclusive Perfumes for Every Occasion</Sub>
+            <ButtonGroup>
+              <Button primary onClick={() => navigate("/collection")}>
+                Shop Now
+              </Button>
+              <Button onClick={() => navigate("/about")}>Learn More</Button>
+            </ButtonGroup>
+          </Hero>
+
+          <SectionTitle>New Arrival</SectionTitle>
+          <ProductGrid>
+            {products.map((product) => (
+              <Card key={product._id}>
+                <ProductImageWrapper>
+                  {product.discount && (
+                    <DiscountBadge>{product.discount}</DiscountBadge>
+                  )}
+                  <ProductImage src={product.image} alt={product.name} />
+                </ProductImageWrapper>
+                <ProductInfo>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductDescription>{product.description}</ProductDescription>
+                  <DescriptionRow>
+                    <Rating>
+                      {Array.from({ length: Math.round(product.rating) }).map(
+                        (_, index) => (
+                          <span key={index}>★</span>
+                        )
+                      )}
+                    </Rating>
+                    <ProductVolume>{product.volume}</ProductVolume>
+                  </DescriptionRow>
+                  <BottomWrapper>
+                    <OldPrice>${product.originalPrice}</OldPrice>
+                    <NewPrice>${product.price}</NewPrice>
+                  </BottomWrapper>
+                  <BuyButton>Add to Cart</BuyButton>
+                </ProductInfo>
+              </Card>
+            ))}
+          </ProductGrid>
+
+          <MagazineSection>
+            <MagazineTitle>Magazine</MagazineTitle>
+            <MagazineGrid>
+              <MagazineCard>
+                <MagazineImage
+                  src="/images/magazine/BLOOM OPSIDIAN magazine.png"
+                  alt="Magazine 1"
+                />
+                <MagazineContent>
+                  <MagazineHeadline>Obsidian Bloom: A Floral Darkness with a Bold, Sensual Twist</MagazineHeadline>
+                  <MagazineText>
+                    Obsidian Bloom is a bold and mysterious fragrance where
+                    florals take on a deeper, more powerful form. This isn't a
+                    typical bouquet it's elegance cloaked in shadow, made for
+                    those who love complexity and crave a scent that lingers in
+                    memory. Opening with blackcurrant, saffron, and pink pepper,
+                    Obsidian Bloom immediately evokes a warm, spicy intrigue.{" "}
+                    <a href="/magazine">Read more</a>
+                  </MagazineText>
+                </MagazineContent>
+              </MagazineCard>
+              <MagazineCard>
+                <MagazineImage
+                  src="/images/magazine/Velvet Verona magazine.png"
+                  alt="Magazine 2"
+                />
+                <MagazineContent>
+                  <MagazineHeadline>Velvet Verona: A Romantic Classic Wrapped in Warm Sophistication
+</MagazineHeadline>
+                  <MagazineText>
+                  Velvet Verona is a fragrance that whispers timeless romance through a veil of velvet warmth and refined femininity. Inspired by the soul of Verona the city of love this scent feels like poetry made perfume.
+
+It opens with juicy bergamot, ripe plum, and pear nectar, a fruity touch that is both fresh and inviting{" "}
+                    <a href="/magazine">Read more</a>
+                  </MagazineText>
+                </MagazineContent>
+              </MagazineCard>
+            </MagazineGrid>
+          </MagazineSection>
+        </>
+      )}
+      <Footer />
     </Container>
   );
 };

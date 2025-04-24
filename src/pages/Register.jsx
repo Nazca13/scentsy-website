@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import {BrowserRouter, useNavigate, Link } from 'react-router-dom';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -37,7 +37,7 @@ const FormSection = styled.div`
   flex-direction: column;
   align-items: center;
   color: #ffffff;
-  gap: 0.8rem;
+  gap: 0.5rem; /* Reduced from 0.8rem to move elements up */
 `;
 
 const ImageSection = styled.div`
@@ -48,7 +48,7 @@ const ImageSection = styled.div`
 `;
 
 const Logo = styled.div`
-  margin-bottom: -12px;
+  margin-bottom: -18px; /* Adjusted from -12px to move logo up */
   display: flex;
   justify-content: center;
 
@@ -63,7 +63,7 @@ const SectionTitle = styled.h2`
   color: #D6B341;
   font-size: 1.1rem;
   font-weight: normal;
-  margin: -5px 0 0.5rem 0;
+  margin: -10px 0 0.3rem 0; /* Adjusted margins to move up */
   user-select: none;
   width: 80%;
   text-align: left;
@@ -72,12 +72,13 @@ const SectionTitle = styled.h2`
 const InputGroup = styled.div`
   position: relative;
   width: 80%;
+  margin-bottom: -5px; /* Added negative margin to reduce space between fields */
 `;
 
 const InputLabel = styled.label`
   display: block;
   color: #D6B341;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.3rem; /* Reduced from 0.4rem */
   font-size: 10px;
   user-select: none;
 `;
@@ -120,7 +121,7 @@ const RegisterButton = styled.button`
   border-radius: 30px;
   font-size: 0.85rem;
   cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 0.2rem; /* Reduced from 0.5rem */
   transition: all 0.3s;
   text-transform: uppercase;
   font-weight: bold;
@@ -129,6 +130,25 @@ const RegisterButton = styled.button`
   &:hover {
     background-color: #c9a235;
     color: #ffffff;
+  }
+`;
+
+const SignInText = styled.div`
+  margin-top: 0.3rem; /* Reduced from 0.5rem */
+  font-size: 10px;
+  color: #ffffff;
+  user-select: none;
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 4px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #D6B341;
+    }
   }
 `;
 
@@ -165,10 +185,9 @@ const RegisterPage = () => {
   }, []);
 
   const handleRegister = () => {
-    // Simulasi register, nanti bisa diganti API call
     console.log("Register:", { name, email, password });
     alert("Registrasi berhasil!");
-    navigate("/login"); // atau bisa langsung ke /dashboard
+    navigate("/login"); 
   };
 
   return (
@@ -179,7 +198,7 @@ const RegisterPage = () => {
             <img src="/images/SCENTSY TITLE.png" alt="SCNTSY Logo" />
           </Logo>
 
-          <SectionTitle>Register</SectionTitle>
+          <SectionTitle>Sign up</SectionTitle>
 
           <InputGroup>
             <InputLabel>Name</InputLabel>
@@ -209,16 +228,21 @@ const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
             />
-             <TogglePassword onClick={() => setShowPassword(!showPassword)}>
+            <TogglePassword onClick={() => setShowPassword(!showPassword)}>
               <img 
-              src={showPassword ? "/images/after.png" : "/images/before.png"} 
-              alt="toggle password visibility" 
-              style={{ width: "20px", height: "16px" }}
+                src={showPassword ? "/images/after.png" : "/images/before.png"} 
+                alt="toggle password visibility" 
+                style={{ width: "20px", height: "16px" }}
               />
-              </TogglePassword>
+            </TogglePassword>
           </InputGroup>
 
-          <RegisterButton onClick={handleRegister}>REGISTER</RegisterButton>
+          <RegisterButton onClick={handleRegister}>SIGN UP</RegisterButton>
+
+          <SignInText>
+            Already have an account?
+            <Link to="/login">Sign in now</Link>
+          </SignInText>
         </FormSection>
 
         <ImageSection />
@@ -228,4 +252,3 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
- 

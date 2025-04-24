@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { BrowserRouter, useNavigate, Link } from 'react-router-dom';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -55,7 +55,8 @@ const Logo = styled.div`
   img {
     height: 120px;
     width: auto;
-    object-fit: contain;  }
+    object-fit: contain;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -131,6 +132,25 @@ const LoginButton = styled.button`
   }
 `;
 
+const SignUpText = styled.div`
+  margin-top: 0.5rem;
+  font-size: 10px;
+  color: #ffffff;
+  user-select: none;
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 4px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #D6B341;
+    }
+  }
+`;
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -163,7 +183,7 @@ const LoginPage = () => {
   }, []);
 
   const handleLogin = () => {
-    navigate("/dashboard");
+    navigate("/homepage");
   };
 
   return (
@@ -177,7 +197,7 @@ const LoginPage = () => {
             />
           </Logo>
 
-          <SectionTitle>Login</SectionTitle>
+          <SectionTitle>Sign in</SectionTitle>
 
           <InputGroup>
             <InputLabel>Email</InputLabel>
@@ -199,14 +219,19 @@ const LoginPage = () => {
             />
             <TogglePassword onClick={() => setShowPassword(!showPassword)}>
               <img 
-              src={showPassword ? "/images/after.png" : "/images/before.png"} 
-              alt="toggle password visibility" 
-              style={{ width: "20px", height: "16px" }}
+                src={showPassword ? "/images/after.png" : "/images/before.png"} 
+                alt="toggle password visibility" 
+                style={{ width: "20px", height: "16px" }}
               />
-              </TogglePassword>
+            </TogglePassword>
           </InputGroup>
 
-          <LoginButton onClick={handleLogin}>LOGIN</LoginButton>
+          <LoginButton onClick={handleLogin}>SIGN IN</LoginButton>
+
+          <SignUpText>
+            Don't have an account?
+            <Link to="/register">Sign up now</Link>
+          </SignUpText>
         </FormSection>
 
         <ImageSection />

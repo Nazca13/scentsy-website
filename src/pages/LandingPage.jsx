@@ -22,11 +22,10 @@ const Navbar = styled.nav`
 `;
 
 const Logo = styled.img`
-  height: 150px;
-  margin-top: -40px;
-  margin-bottom: -25px;
+  height: 240px;
+  margin-top: -75px;
+  margin-bottom: -70px;
 `;
-
 const NavLinks = styled.div`
   display: flex;
   justify-content: space-between;
@@ -185,13 +184,13 @@ const LandingPage = () => {
         <Logo src="/images/SCENTSY TITLE.png" alt="SCENTSY Logo" />
         <NavLinks>
           <LeftNav>
-            <a href="#">COLLECTION</a>
-            <a href="#">NEW</a>
-            <a href="#">TITLE</a>
+            <a href="/login">COLLECTION</a>
+            <a href="/login">NEW</a>
+            <a href="/login">SALE</a>
           </LeftNav>
           <RightNav>
-            <a href="#">MAGAZINE</a>
-            <a href="#">ABOUT SCENTSY</a>
+            <a href="/login">MAGAZINE</a>
+            <a href="/login">ABOUT SCENTSY</a>
           </RightNav>
         </NavLinks>
       </Navbar>

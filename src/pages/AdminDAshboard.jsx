@@ -1,67 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
-import React, { useState } from 'react';
-
-const users = [
-  {
-    name: "Ahmad Fauzi",
-    email: "ahmad@example.com",
-    joinDate: "15-04-2025"
-  },
-  {
-    name: "Dewi Ayu",
-    email: "dewi@example.com",
-    joinDate: "14-04-2025"
-  }
-];
-
-const AdminDashboard = () => {
-  const handleLogout = () => {
-    console.log("Logging out...");
-    // tambahin logic log out contohkek redirect:
-    // window.location.href = "/login";
-  };
-
-  return (
-    <Wrapper>
-      <Navbar>
-        <Logo src="/images/SCENTSY TITLE.png" alt="Logo" />
-        <NavBarTop>
-          <NavLink href="/" $isActive>Preview</NavLink>
-          <RightItems>
-            <NavLink href="/addproduct">Product</NavLink>
-            <IconWrapper onClick={handleLogout}>
-              <img className="default" src="/icons/log-out.svg" alt="Logout" />
-              <img className="hover" src="/icons/log-out-gold.svg" alt="Logout" />
-            </IconWrapper>
-          </RightItems>
-        </NavBarTop>
-      </Navbar>
-
-      <Content>
-        <Title>Active Users</Title>
-        {users.map((user, index) => (
-          <UserCard key={index}>
-            <UserInfo>
-              <strong>Name:</strong> {user.name}
-            </UserInfo>
-            <UserInfo>
-              <strong>Email:</strong> {user.email}
-            </UserInfo>
-            <UserInfo>
-              <strong>Password:</strong> ••••••••
-            </UserInfo>
-            <UserInfo>
-              <strong>Join Date:</strong> {user.joinDate}
-            </UserInfo>
-            <Divider />
-          </UserCard>
-        ))}
-      </Content>
-    </Wrapper>
-  );
-};
-
-export default AdminDashboard;
+import { useAuth } from '../contexts/AuthContext';
+import { fetchUsers } from '../services/users';
 
 const Wrapper = styled.div`
   background-color: #0d0d0d;
@@ -189,3 +129,85 @@ const Divider = styled.hr`
   background-color: #333;
   margin-top: 15px;
 `;
+
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+`;
+
+const AdminDashboard = () => {
+  const { user, logout } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        setLoading(true);
+        const usersData = await fetchUsers();
+        setUsers(usersData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadUsers();
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
+  if (!user || !user.isAdmin) {
+    return <Navigate to="/login" />;
+  }
+
+  return (
+    <Wrapper>
+      <Navbar>
+        <Logo src="/images/SCENTSY TITLE.png" alt="Logo" />
+        <NavBarTop>
+          <NavLink href="/admin" $isActive>Users</NavLink>
+          <RightItems>
+            <NavLink href="/admin/products/add">Products</NavLink>
+            <IconWrapper onClick={handleLogout}>
+              <img className="default" src="/icons/log-out.svg" alt="Logout" />
+              <img className="hover" src="/icons/log-out-gold.svg" alt="Logout" />
+            </IconWrapper>
+          </RightItems>
+        </NavBarTop>
+      </Navbar>
+
+      <Content>
+        {loading && <Loader />}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        
+        <Title>Active Users</Title>
+        {users.map((user) => (
+          <UserCard key={user._id}>
+            <UserInfo>
+              <strong>Name:</strong> {user.name}
+            </UserInfo>
+            <UserInfo>
+              <strong>Email:</strong> {user.email}
+            </UserInfo>
+            <UserInfo>
+              <strong>Join Date:</strong> {new Date(user.createdAt).toLocaleDateString()}
+            </UserInfo>
+            <Divider />
+          </UserCard>
+        ))}
+      </Content>
+    </Wrapper>
+  );
+};
+
+export default AdminDashboard; 

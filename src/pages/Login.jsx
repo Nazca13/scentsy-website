@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { BrowserRouter, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { login } from '../services/auth';
 
 const LoginContainer = styled.div`
   display: flex;
@@ -150,40 +152,32 @@ const SignUpText = styled.div`
     }
   }
 `;
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+`;
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = "public/images/SCENTSY TITLE.png";
-
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-
-    const preventZoom = (e) => {
-      if (e.touches.length > 1) e.preventDefault();
-    };
-
-    document.addEventListener('touchmove', preventZoom, { passive: false });
-    document.addEventListener('gesturestart', preventZoom);
-
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      document.body.style.position = '';
-      document.removeEventListener('touchmove', preventZoom);
-      document.removeEventListener('gesturestart', preventZoom);
-    };
-  }, []);
-
-  const handleLogin = () => {
-    navigate("/homepage");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const { user, token } = await login({ email, password });
+      authLogin(user, token);
+      navigate("/homepage");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+    }
   };
 
   return (
@@ -191,42 +185,45 @@ const LoginPage = () => {
       <LoginBox>
         <FormSection>
           <Logo>
-            <img 
-              src="/images/SCENTSY TITLE.png" 
-              alt="SCNTSY Logo"
-            />
+            <img src="/images/SCENTSY TITLE.png" alt="SCENTSY Logo" />
           </Logo>
+
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
           <SectionTitle>Sign in</SectionTitle>
 
-          <InputGroup>
-            <InputLabel>Email</InputLabel>
-            <InputField 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <InputLabel>Password</InputLabel>
-            <InputField 
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
-            <TogglePassword onClick={() => setShowPassword(!showPassword)}>
-              <img 
-                src={showPassword ? "/images/after.png" : "/images/before.png"} 
-                alt="toggle password visibility" 
-                style={{ width: "20px", height: "16px" }}
+          <form onSubmit={handleLogin}>
+            <InputGroup>
+              <InputLabel>Email</InputLabel>
+              <InputField 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
               />
-            </TogglePassword>
-          </InputGroup>
+            </InputGroup>
 
-          <LoginButton onClick={handleLogin}>SIGN IN</LoginButton>
+            <InputGroup>
+              <InputLabel>Password</InputLabel>
+              <InputField 
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+              <TogglePassword onClick={() => setShowPassword(!showPassword)}>
+                <img 
+                  src={showPassword ? "/images/after.png" : "/images/before.png"} 
+                  alt="toggle password visibility" 
+                  style={{ width: "20px", height: "16px" }}
+                />
+              </TogglePassword>
+            </InputGroup>
+
+            <LoginButton type="submit">SIGN IN</LoginButton>
+          </form>
 
           <SignUpText>
             Don't have an account?

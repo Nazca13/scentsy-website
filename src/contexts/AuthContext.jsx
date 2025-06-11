@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser } from '../services/auth';
+import { getCurrentUser, login as apiLogin, logout as apiLogout } from '../services/auth';
 
 const AuthContext = createContext();
 
@@ -22,18 +22,34 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    setUser(userData);
+  const login = async (email, password) => {
+    try {
+      const { user, token } = await apiLogin({ email, password });
+      localStorage.setItem('token', token);
+      setUser(user);
+      return user;
+    } catch (err) {
+      throw err;
+    }
   };
 
   const logout = async () => {
-    localStorage.removeItem('token');
-    setUser(null);
+    try {
+      await apiLogout();
+      localStorage.removeItem('token');
+      setUser(null);
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );

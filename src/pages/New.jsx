@@ -52,8 +52,8 @@ const Loader = styled.div`
 
 const PageWrapper = styled.div`
   font-family: "Noto Serif", serif;
-  background: #0f0f0f;
-  color: white;
+  background: #091018;
+  color: #F5F5F5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -114,8 +114,8 @@ const ProductGrid = styled.div`
 `;
 
 const Card = styled.div`
-  background: #1d1d1c;
-  border-radius: 8px;
+background: #091018;
+border-radius: 8px;
   overflow: hidden;
   color: white;
   box-shadow: 0 0 6px rgba(214, 179, 65, 0.25);

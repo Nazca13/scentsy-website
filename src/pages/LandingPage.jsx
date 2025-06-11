@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Container = styled.div`
   font-family: 'Noto Serif', serif;
-  background-color: black;
-  color: white;
+  background-color: #091018;
+  color: #F5F5F5;
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
@@ -16,7 +16,7 @@ const Navbar = styled.nav`
   flex-direction: column;
   padding: 0 60px 5px;
   align-items: center;
-  background-color: #090909;
+  background-color: #091018;
   position: relative;
   z-index: 2;
 `;
@@ -25,7 +25,14 @@ const Logo = styled.img`
   height: 240px;
   margin-top: -75px;
   margin-bottom: -70px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 `;
+
 const NavLinks = styled.div`
   display: flex;
   justify-content: space-between;
@@ -33,26 +40,33 @@ const NavLinks = styled.div`
   font-size: 18px;
   margin-top: -30px;
   padding-bottom: 5px;
+`;
 
-  a {
-    color: white;
-    text-decoration: none;
-    position: relative;
-    padding-bottom: 4px;
+const NavLink = styled.a`
+  color: ${props => props.$isActive ? '#D6B341' : '#F5F5F5'};
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 4px;
+  transition: all 0.3s ease;
+  font-weight: ${props => props.$isActive ? '500' : 'normal'};
 
-    &:hover {
-      color: #D6B341;
-    }
+  &:hover {
+    color: #D6B341;
+  }
 
-    &:hover::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 2px;
-      background-color: #D6B341;
-    }
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: ${props => props.$isActive ? '100%' : '0'};
+    height: 2px;
+    background-color: #D6B341;
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
   }
 `;
 
@@ -67,6 +81,31 @@ const RightNav = styled.div`
   gap: 40px;
   justify-content: flex-end;
 `;
+
+const TopRightWrapper = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 84px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #FAFAFA;
+  border-radius: 20px;
+  padding: 2px 12px;
+  height: 26px;
+  background-color: transparent;
+  transition: border-color 0.3s ease;
+
+  &:hover {
+    border-color: #D6B341;
+  }
+`;
+
 
 const HeroSection = styled.section`
   background: url('/images/background landing.png') no-repeat center center;
@@ -86,6 +125,7 @@ const Subtitle = styled.p`
   letter-spacing: 1px;
   color: #D6B341;
   margin-bottom: 30px;
+  text-transform: uppercase;
 `;
 
 const HeroText = styled.h1`
@@ -108,9 +148,13 @@ const Button = styled.button`
   cursor: pointer;
   margin-top: 30px;
   border-radius: 4px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: #b8912f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -121,15 +165,6 @@ const Footer = styled.footer`
   justify-content: space-between;
   flex-wrap: wrap;
   font-size: 12px;
-  border-top: 0.5px solid #333;
-`;
-
-const FooterTopBar = styled.div`
-  width: 1100px;
-  height: 1px;
-  background-color: white;
-  margin: 0 auto 30px auto;
-  border-radius: 1px;
 `;
 
 const Column = styled.div`
@@ -140,7 +175,7 @@ const Column = styled.div`
 `;
 
 const FooterHeading = styled.h4`
-  color: #D6B341;
+  color: #090909;
   margin-bottom: 20px;
 `;
 
@@ -155,6 +190,7 @@ const SocialIcons = styled.div`
     gap: 10px;
     color: white;
     text-decoration: none;
+    transition: color 0.3s ease;
 
     &:hover {
       color: #D6B341;
@@ -177,20 +213,90 @@ const Copyright = styled.p`
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.includes(path);
+  };
+
+  const handleNavigation = (path, e) => {
+    e.preventDefault();
+    navigate(path);
+  };
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('authToken');
+    navigate('/');
+  }, [navigate]);
+
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
 
   return (
     <Container>
       <Navbar>
-        <Logo src="/images/SCENTSY TITLE.png" alt="SCENTSY Logo" />
+        
+        <Logo
+          src="/images/SCENTSY TITLE.png"
+          alt="SCENTSY Logo"
+          onClick={() => navigate('/login')}
+        />
+
         <NavLinks>
           <LeftNav>
-            <a href="/login">COLLECTION</a>
-            <a href="/login">NEW</a>
-            <a href="/login">SALE</a>
+            <NavLink
+              href="/login"
+              $isActive={isActive('/login')}
+              onClick={(e) => handleNavigation('/login', e)}
+            >
+              HOME
+            </NavLink>
+            <NavLink
+              href="/login"
+              $isActive={isActive('/login')}
+              onClick={(e) => handleNavigation('/login', e)}
+            >
+              NEW
+            </NavLink>
+            <NavLink
+              href="/login"
+              $isActive={isActive('/login')}
+              onClick={(e) => handleNavigation('/login', e)}
+            >
+              HOT SALE
+            </NavLink>
+            <NavLink
+              href="/login"
+              $isActive={isActive('/login')}
+              onClick={(e) => handleNavigation('/login', e)}
+            >
+              ABOUT
+            </NavLink>
           </LeftNav>
+          
           <RightNav>
-            <a href="/login">MAGAZINE</a>
-            <a href="/login">ABOUT SCENTSY</a>
+            <NavLink
+               href="/login"
+               $isActive={isActive('/login')}
+               onClick={(e) => handleNavigation('/login', e)}
+            >
+              MAN
+            </NavLink>
+            <NavLink
+               href="/login"
+               $isActive={isActive('/login')}
+               onClick={(e) => handleNavigation('/login', e)}
+            >
+              WOMAN
+            </NavLink>
           </RightNav>
         </NavLinks>
       </Navbar>
@@ -204,7 +310,6 @@ const LandingPage = () => {
       </HeroSection>
 
       <Footer>
-        <FooterTopBar />
         <Column>
           <FooterHeading>Scentsy: The Perfect Fragrance For You</FooterHeading>
           <p>

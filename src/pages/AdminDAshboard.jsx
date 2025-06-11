@@ -1,213 +1,389 @@
 import React, { useState, useEffect } from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { 
+  fetchProducts, 
+  createProduct, 
+  updateProduct, 
+  deleteProduct 
+} from '../services/productService';
 import { useAuth } from '../contexts/AuthContext';
-import { fetchUsers } from '../services/users';
+import { fetchUsers } from '../services/userService';
 
+
+// Styled Components (keep your existing styles)
 const Wrapper = styled.div`
-  background-color: #0d0d0d;
+  font-family: 'Noto Serif', serif;
+  background-color: #091018;
+  color: #F5F5F5;
   min-height: 100vh;
-  color: white;
 `;
 
 const Navbar = styled.nav`
   display: flex;
-  flex-direction: column;
-  padding: 0 60px 5px;
+  justify-content: space-between;
   align-items: center;
-  background-color: #090909;
-  position: relative;
-  z-index: 2;
+  padding: 1rem 2rem;
+  background-color: #091018;
+  border-bottom: 1px solid #333;
 `;
 
 const Logo = styled.img`
-  height: 240px;
-  margin-top: -75px;
-  margin-bottom: -70px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: scale(1.02);
-  }
+  height: 50px;
 `;
 
-const NavBarTop = styled.div`
+const NavLinksContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-top: -30px;
-  padding-bottom: 5px;
+  gap: 2rem;
 `;
 
 const NavLink = styled.a`
-  color: ${props => props.$isActive ? '#D6B341' : '#FAFAFA'};
+  color: ${props => props.$isActive ? '#D6B341' : '#F5F5F5'};
   text-decoration: none;
-  position: relative;
-  padding-bottom: 4px;
-  transition: all 0.3s ease;
-  font-weight: ${props => props.$isActive ? '500' : 'normal'};
-  font-size: 18px;
-
-  &:hover {
-    color: #D6B341;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: ${props => props.$isActive ? '100%' : '0'};
-    height: 2px;
-    background-color: #D6B341;
-    transition: width 0.3s ease;
-  }
-
-  &:hover::after {
-    width: 100%;
-  }
+  cursor: pointer;
+  font-weight: ${props => props.$isActive ? 'bold' : 'normal'};
 `;
 
 const RightItems = styled.div`
   display: flex;
-  gap: 30px;
   align-items: center;
+  gap: 1rem;
 `;
 
 const IconWrapper = styled.div`
-  position: relative;
-  width: 24px;
-  height: 24px;
   cursor: pointer;
-
-  img.default {
-    display: block;
-  }
-
-  img.hover {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  &:hover img.default {
-    display: none;
-  }
-
-  &:hover img.hover {
-    display: block;
-  }
 `;
 
 const Content = styled.div`
-  padding: 40px 60px;
+  padding: 2rem;
 `;
 
-const Title = styled.h2`
-  font-size: 28px;
-  color: #D6B341;
-  margin-bottom: 20px;
-`;
+const Loader = styled.div`
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #D6B341;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 2rem auto;
 
-const UserCard = styled.div`
-  background-color: #1a1a1a;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-`;
-
-const UserInfo = styled.p`
-  margin: 5px 0;
-`;
-
-const Divider = styled.hr`
-  border: 0;
-  height: 1px;
-  background-color: #333;
-  margin-top: 15px;
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 `;
 
 const ErrorMessage = styled.div`
   color: #ff6b6b;
   background: rgba(255, 107, 107, 0.1);
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  font-size: 14px;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  text-align: center;
 `;
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [productData, setProductData] = useState({ 
+    name: '', 
+    description: '', 
+    stock: 0, 
+    price: '',
+    volume: '',
+    rating: 4.9,
+    discount: '',
+    image: null
+  });
+  const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalProducts: 0,
+    totalSales: 0,
+    pendingPayments: 0,
+    totalReviews: 0
+  });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        setLoading(true);
-        const usersData = await fetchUsers();
-        setUsers(usersData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadUsers();
+    if (!user || user.role !== 'admin') {
+      navigate('/login');
+      return;
+    }
+    loadDashboardData();
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [productsResponse, usersResponse] = await Promise.all([
+        fetchProducts(),
+        fetchUsers()
+      ]);
+
+      if (!productsResponse.success || !usersResponse.success) {
+        throw new Error('Failed to fetch dashboard data');
+      }
+
+      setProducts(productsResponse.data || []);
+      setUsers(usersResponse.data || []);
+      
+      // Calculate stats based on fetched data
+      setStats({
+        totalUsers: usersResponse.data?.length || 0,
+        totalProducts: productsResponse.data?.length || 0,
+        totalSales: 0, // You'll need to implement this
+        pendingPayments: 0, // You'll need to implement this
+        totalReviews: 0 // You'll need to implement this
+      });
+
+    } catch (err) {
+      console.error('Dashboard load error:', err);
+      setError(err.message || 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (!user || !user.isAdmin) {
-    return <Navigate to="/login" />;
+  const handleProductSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      
+      const formData = new FormData();
+      Object.entries(productData).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          formData.append(key, value);
+        }
+      });
+
+      let response;
+      if (productData._id) {
+        response = await updateProduct(productData._id, formData);
+        setProducts(products.map(p => p._id === productData._id ? response.data : p));
+      } else {
+        response = await createProduct(formData);
+        setProducts([...products, response.data]);
+      }
+
+      resetProductForm();
+    } catch (err) {
+      setError(err.message || 'Failed to save product');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetProductForm = () => {
+    setProductData({ 
+      name: '', 
+      description: '', 
+      stock: 0, 
+      price: '',
+      volume: '',
+      rating: 4.9,
+      discount: '',
+      image: null
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    setProductData(prev => ({ ...prev, image: e.target.files[0] }));
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+      setLoading(true);
+      await deleteProduct(productId);
+      setProducts(products.filter(p => p._id !== productId));
+    } catch (err) {
+      setError(err.message || 'Failed to delete product');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Wrapper>
+        <Loader />
+      </Wrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <Wrapper>
+        <Navbar>
+          <Logo src="/images/SCENTSY_TITLE.png" alt="Logo" />
+          <NavLinksContainer>
+            <NavLink onClick={() => window.location.reload()}>Refresh</NavLink>
+          </NavLinksContainer>
+        </Navbar>
+        <ErrorMessage>
+          <h3>Error Loading Dashboard</h3>
+          <p>{error}</p>
+          <button onClick={loadDashboardData}>Retry</button>
+        </ErrorMessage>
+      </Wrapper>
+    );
   }
 
   return (
     <Wrapper>
       <Navbar>
-        <Logo src="/images/SCENTSY TITLE.png" alt="Logo" />
-        <NavBarTop>
-          <NavLink href="/admin" $isActive>Users</NavLink>
-          <RightItems>
-            <NavLink href="/admin/products/add">Products</NavLink>
-            <IconWrapper onClick={handleLogout}>
-              <img className="default" src="/icons/log-out.svg" alt="Logout" />
-              <img className="hover" src="/icons/log-out-gold.svg" alt="Logout" />
-            </IconWrapper>
-          </RightItems>
-        </NavBarTop>
+        <Logo src="/images/SCENTSY_TITLE.png" alt="Logo" />
+        <NavLinksContainer>
+          <NavLink 
+            $isActive={activeTab === 'overview'} 
+            onClick={() => setActiveTab('overview')}
+          >
+            Overview
+          </NavLink>
+          <NavLink 
+            $isActive={activeTab === 'users'} 
+            onClick={() => setActiveTab('users')}
+          >
+            Users
+          </NavLink>
+          <NavLink 
+            $isActive={activeTab === 'products'} 
+            onClick={() => setActiveTab('products')}
+          >
+            Products
+          </NavLink>
+        </NavLinksContainer>
+        <RightItems>
+          <span style={{ color: '#D6B341' }}>{user?.name || 'Admin'}</span>
+          <IconWrapper onClick={logout}>
+            <img src="/icons/log-out.svg" alt="Logout" />
+          </IconWrapper>
+        </RightItems>
       </Navbar>
 
       <Content>
-        {loading && <Loader />}
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        
-        <Title>Active Users</Title>
-        {users.map((user) => (
-          <UserCard key={user._id}>
-            <UserInfo>
-              <strong>Name:</strong> {user.name}
-            </UserInfo>
-            <UserInfo>
-              <strong>Email:</strong> {user.email}
-            </UserInfo>
-            <UserInfo>
-              <strong>Join Date:</strong> {new Date(user.createdAt).toLocaleDateString()}
-            </UserInfo>
-            <Divider />
-          </UserCard>
-        ))}
+        {activeTab === 'overview' && (
+          <div>
+            <h2>Dashboard Overview</h2>
+            <div>
+              <p>Total Users: {stats.totalUsers}</p>
+              <p>Total Products: {stats.totalProducts}</p>
+              <p>Total Sales: {stats.totalSales}</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'users' && (
+          <div>
+            <h2>User Management</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user._id}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {activeTab === 'products' && (
+          <div>
+            <h2>Product Management</h2>
+            <form onSubmit={handleProductSubmit}>
+              <div>
+                <label>Product Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={productData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              
+              <div>
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  value={productData.description}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              
+              <div>
+                <label>Price</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={productData.price}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              
+              <div>
+                <label>Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+              
+              <button type="submit">
+                {productData._id ? 'Update Product' : 'Add Product'}
+              </button>
+            </form>
+
+            <div>
+              <h3>Product List</h3>
+              {products.map(product => (
+                <div key={product._id}>
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    width="100"
+                  />
+                  <h4>{product.name}</h4>
+                  <p>{product.price}</p>
+                  <button onClick={() => setProductData(product)}>
+                    Edit
+                  </button>
+                  <button onClick={() => handleDeleteProduct(product._id)}>
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Content>
     </Wrapper>
   );
 };
 
-export default AdminDashboard; 
+export default AdminDashboard;

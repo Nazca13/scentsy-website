@@ -1,7 +1,8 @@
+// src/services/productService.js
 import API from '../api';
 
-export const fetchProducts = async () => {
-  const response = await API.get('/products');
+export const fetchProducts = async (params = {}) => {
+  const response = await API.get('/products', { params });
   return response.data;
 };
 
@@ -33,5 +34,6 @@ export const updateProduct = async (id, productData) => {
 };
 
 export const deleteProduct = async (id) => {
-  return await API.delete(`/products/${id}`);
+  const response = await API.delete(`/products/${id}`);
+  return response.data;
 };

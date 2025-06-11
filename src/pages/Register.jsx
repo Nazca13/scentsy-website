@@ -9,7 +9,7 @@ const LoginContainer = styled.div`
   height: 100vh;
   width: 100vw;
   font-family: 'Noto Serif', serif;
-  background-color: #000000;
+  background-color: #01080F;
   position: fixed;
   top: 0;
   left: 0;
@@ -21,7 +21,7 @@ const LoginBox = styled.div`
   display: flex;
   width: 700px;
   height: 480px;
-  background: #121212;
+  background: #091018;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 0 15px rgba(214, 175, 65, 0.3);
@@ -72,13 +72,13 @@ const SectionTitle = styled.h2`
 const InputGroup = styled.div`
   position: relative;
   width: 80%;
-  margin-bottom: -5px; /* Added negative margin to reduce space between fields */
+  margin-bottom: 
 `;
 
 const InputLabel = styled.label`
   display: block;
   color: #D6B341;
-  margin-bottom: 0.3rem; /* Reduced from 0.4rem */
+  margin-bottom: 0.3rem; 
   font-size: 10px;
   user-select: none;
 `;

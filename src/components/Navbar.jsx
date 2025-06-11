@@ -7,7 +7,7 @@ const Navbar = styled.nav`
   flex-direction: column;
   padding: 0 60px 5px;
   align-items: center;
-  background-color: #090909;
+  background-color: #091018;
   position: relative;
   z-index: 2;
 `;
@@ -34,7 +34,7 @@ const NavLinks = styled.div`
 `;
 
 const NavLink = styled.a`
-  color: ${props => props.$isActive ? '#D6B341' : '#FAFAFA'};
+  color: ${props => props.$isActive ? '#D6B341' : '#F5F5F5'};
   text-decoration: none;
   position: relative;
   padding-bottom: 4px;
@@ -173,12 +173,6 @@ const Header = () => {
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
-
-      // kalau mau langsung fetch:
-      // fetch(`/api/search?query=${searchQuery}`)
-      //   .then(res => res.json())
-      //   .then(data => console.log(data));
-
       setSearchQuery('');
     }
   };
@@ -222,11 +216,11 @@ const Header = () => {
       <NavLinks>
         <LeftNav>
           <NavLink
-            href="/collection"
-            $isActive={isActive('/collection')}
-            onClick={(e) => handleNavigation('/collection', e)}
+            href="/homepage"
+            $isActive={isActive('/homepage')}
+            onClick={(e) => handleNavigation('/homepage', e)}
           >
-            COLLECTION
+            HOME
           </NavLink>
           <NavLink
             href="/new"
@@ -242,21 +236,22 @@ const Header = () => {
           >
             HOT SALE
           </NavLink>
-        </LeftNav>
-        <RightNav>
-          <NavLink
-            href="/magazine"
-            $isActive={isActive('/magazine')}
-            onClick={(e) => handleNavigation('/magazine', e)}
-          >
-            MAGAZINE
-          </NavLink>
           <NavLink
             href="/about"
             $isActive={isActive('/about')}
             onClick={(e) => handleNavigation('/about', e)}
           >
-            ABOUT SCENTSY
+            ABOUT
+          </NavLink>
+        </LeftNav>
+        
+        <RightNav>
+          <NavLink
+            href="/collection"
+            $isActive={isActive('/collection')}
+            onClick={(e) => handleNavigation('/collection', e)}
+          >
+            Collection
           </NavLink>
         </RightNav>
       </NavLinks>

@@ -50,13 +50,15 @@ const Loader = styled.div`
 `;
 
 const AboutContainer = styled.div`
-  background-color: #000;
-  color: white;
+  background-color: #091018;
+  color: #F5F5F5;
   font-family: 'Georgia', serif;
   min-height: 100vh;
 `;
 
+
 const AboutWrapper = styled.div`
+background-color: #091018;
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 20px;
@@ -132,6 +134,7 @@ const ImageBottomRight = styled.img`
 `;
 
 const AboutPage = () => {
+  console.log("AboutPage rendered");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

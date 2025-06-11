@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+// src/pages/HomePage.jsx
+import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useProducts } from "../hooks/useProducts";
 
 const LoaderOverlay = styled.div`
   position: fixed;
@@ -10,7 +12,7 @@ const LoaderOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(15, 15, 15, 0.8);
+  background-color: rgba(1, 8, 15, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,93 +47,37 @@ const Loader = styled.div`
   }
 
   @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 
-const Container = styled.div`
+const ErrorMessage = styled.div`
+  color: red;
+  margin-bottom: 15px;
+  text-align: center;
+`;
+
+const PageContainer = styled.div`
   font-family: "Noto Serif", serif;
-  background-color: black;
-  color: white;
+  background-color: #091018;
+  color: #F5F5F5;
   width: 100%;
   overflow-x: hidden;
 `;
 
-const Hero = styled.section`
-  background: url("/images/background landing.png") center center/cover
-    no-repeat;
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-`;
-
-const Title = styled.h1`
-  font-size: 4rem;
-  color: #fff;
-`;
-
-const Sub = styled.p`
-  font-size: 14px;
-  color: #d6b341;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-top: 30px;
-`;
-
-const Button = styled.button`
-  background: ${(props) => (props.primary ? "#D6B341" : "transparent")};
-  color: ${(props) => (props.primary ? "#000" : "#fff")};
-  border: ${(props) => (props.primary ? "none" : "1px solid white")};
-  padding: 12px 30px;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 4px;
-  transition: 0.3s;
-
-  &:hover {
-    background: ${(props) => (props.primary ? "#b8912f" : "#fff")};
-    color: #000;
-  }
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 28px;
-  text-align: center;
-  margin: 60px 0 10px;
-  position: relative;
-
-  &::after {
-    content: "";
-    display: block;
-    width: 198px;
-    height: 3px;
-    background-color: #d6b341;
-    margin: 8px auto 0;
-  }
-`;
-
 const ProductGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, auto);
-  column-gap: 36px;
-  row-gap: 30px;
-  padding: 40px 80px;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  padding: 20px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-items: center;
 `;
 
 const Card = styled.div`
-  background: #1d1d1c;
+  background: #091018;
   border-radius: 8px;
   overflow: hidden;
   color: white;
@@ -147,17 +93,7 @@ const ProductImageWrapper = styled.div`
   border: 1.5px solid #d6b341;
   border-radius: 8px;
   overflow: hidden;
-  width: 90%;
-  height: 90%;
-  margin: 0 auto;
   aspect-ratio: 1 / 1;
-  background-color: #000;
-`;
-
-const ProductImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 `;
 
 const DiscountBadge = styled.div`
@@ -170,6 +106,12 @@ const DiscountBadge = styled.div`
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 4px;
+`;
+
+const ProductImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 const ProductInfo = styled.div`
@@ -208,7 +150,6 @@ const Rating = styled.div`
   color: red;
   font-size: 9px;
   margin-bottom: 6px;
-
   span {
     color: red;
   }
@@ -235,264 +176,71 @@ const NewPrice = styled.div`
 
 const BuyButton = styled.button`
   background: #d6b341;
-  color: #000;
+  color: black;
   border: none;
-  padding: 8px 22px;
-  border-radius: 1px;
+  padding: 10px 20px;
+  border-radius: 6px;
   font-weight: bold;
-  font-size: 9px;
   cursor: pointer;
-  transition: background 0.3s;
-
+  transition: all 0.3s;
   &:hover {
     background: #b8912f;
   }
 `;
 
-const MagazineSection = styled.section`
-  padding: 60px 80px;
-`;
-
-const MagazineTitle = styled.h2`
-  font-size: 28px;
-  text-align: center;
-  margin-bottom: 40px;
-  position: relative;
-
-  &::after {
-    content: "";
-    display: block;
-    width: 292px;
-    height: 3px;
-    background-color: #d6b341;
-    margin: 8px auto 0;
-  }
-`;
-
-const MagazineGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 5px;
-  row-gap: 40px;
-  margin-top: 52px;
-`;
-
-const MagazineCard = styled.div`
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-`;
-
-const MagazineImage = styled.img`
-  width: 100%;
-  height: 320px;
-  object-fit: contain;
-  border-radius: 8px;
-`;
-
-const MagazineContent = styled.div`
-  padding: 20px;
-`;
-
-const MagazineHeadline = styled.h3`
-  font-size: 24px;
-  color: #fafafa;
-  margin-bottom: 1px;
-  width: 75%;
-  margin-left: 76px;
-`;
-
-const MagazineText = styled.p`
-  font-size: 12px;
-  color: #a09e9e;
-  line-height: 1.4;
-  width: 72%;
-  margin-left: 76px;
-
-  a {
-    color: #d6b341;
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 5px;
-    opacity: 100%;
-
-    &:hover {
-      color: #b8912f;
-    }
-  }
-`;
-
 const HomePage = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { products, loading, error } = useProducts({ newArrival: true });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const dummyData = [
-      {
-        _id: "bloom-opsidian",
-        name: "Bloom Opsidian EDP",
-        description: "Bold, Rare, Exotic",
-        price: 208.0,
-        originalPrice: 278.0,
-        discount: "-25%",
-        rating: 4.9,
-        ratingCount: 634,
-        image: "/images/parfumes/BLOOM OPSIDIAN.png",
-        volume: "125 ml",
-      },
-      {
-        _id: "crimson-elan",
-        name: "crimson-elan",
-        description: "Sensuous, Confident, Bold",
-        price: 160.0,
-        originalPrice: 198.0,
-        discount: "-20%",
-        rating: 4.8,
-        ratingCount: 410,
-        image: "/images/parfumes/Crimson Elan.png",
-        volume: "75 ml",
-      },
-      {
-        _id: "cuir-dor",
-        name: "Cuir D.OR",
-        description: "Exquisite, Signature, Rich",
-        price: 138.0,
-        originalPrice: 172.0,
-        discount: "-20%",
-        rating: 4.7,
-        ratingCount: 390,
-        image: "/images/parfumes/cuir d.or.png",
-        volume: "90 ml",
-      },
-      {
-        _id: "royale-saphir",
-        name: "Royale Saphir",
-        description: "Bright, Clean, Refined",
-        price: 148.0,
-        originalPrice: 165.0,
-        discount: "-10%",
-        rating: 4.6,
-        ratingCount: 200,
-        image: "/images/parfumes/Royale Saphir.png",
-        volume: "90 ml",
-      },
-      {
-        _id: "riche-essence",
-        name: "Riche Essence",
-        description: "Elegant, Subtle, Warm",
-        price: 120.0,
-        originalPrice: 145.0,
-        discount: "-15%",
-        rating: 4.8,
-        ratingCount: 320,
-        image: "/images/parfumes/Riche Essence.png",
-        volume: "100 ml",
-      },
-    ];
+  if (loading) {
+    return (
+      <LoaderOverlay>
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      </LoaderOverlay>
+    );
+  }
 
-    setProducts(dummyData);
-    setLoading(false);
-  }, []);
+  if (error) {
+    return <ErrorMessage>{error}</ErrorMessage>;
+  }
 
   return (
-    <Container>
-      {loading ? (
-        <LoaderOverlay>
-          <LoaderWrapper>
-            <Loader />
-          </LoaderWrapper>
-        </LoaderOverlay>
-      ) : (
-        <>
-          <Navbar />
-          <Hero>
-            <Title>Discover the Essence of Luxury</Title>
-            <Sub>Exclusive Perfumes for Every Occasion</Sub>
-            <ButtonGroup>
-              <Button primary onClick={() => navigate("/collection")}>
-                Shop Now
-              </Button>
-              <Button onClick={() => navigate("/about")}>Learn More</Button>
-            </ButtonGroup>
-          </Hero>
-
-          <SectionTitle>New Arrival</SectionTitle>
+    <PageContainer>
+      <Navbar />
+      <section style={{ padding: "40px" }}>
+        <h2>New Arrival</h2>
+        {products.length === 0 ? (
+          <p>Tidak ada produk</p>
+        ) : (
           <ProductGrid>
             {products.map((product) => (
-              <Card key={product._id}>
+              <Card key={product._id} onClick={() => navigate(`/product/${product._id}`)}>
                 <ProductImageWrapper>
-                  {product.discount && (
-                    <DiscountBadge>{product.discount}</DiscountBadge>
-                  )}
-                  <ProductImage src={product.image} alt={product.name} />
+                  {product.discount && <DiscountBadge>{product.discount}</DiscountBadge>}
+                  <ProductImage src={`${import.meta.env.VITE_API_BASE_URL}${product.image}`} alt={product.name} />
                 </ProductImageWrapper>
                 <ProductInfo>
                   <ProductName>{product.name}</ProductName>
-                  <ProductDescription>{product.description}</ProductDescription>
                   <DescriptionRow>
-                    <Rating>
-                      {Array.from({ length: Math.round(product.rating) }).map(
-                        (_, index) => (
-                          <span key={index}>★</span>
-                        )
-                      )}
-                    </Rating>
+                    <ProductDescription>{product.description}</ProductDescription>
                     <ProductVolume>{product.volume}</ProductVolume>
                   </DescriptionRow>
+                  <Rating>★ {product.rating} <span>({product.ratingCount})</span></Rating>
                   <BottomWrapper>
-                    <OldPrice>${product.originalPrice}</OldPrice>
-                    <NewPrice>${product.price}</NewPrice>
+                    <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
+                    <NewPrice>${product.price.toFixed(2)}</NewPrice>
+                    <BuyButton>BUY NOW</BuyButton>
                   </BottomWrapper>
-                  <BuyButton>Add to Cart</BuyButton>
                 </ProductInfo>
               </Card>
             ))}
           </ProductGrid>
-
-          <MagazineSection>
-            <MagazineTitle>Magazine</MagazineTitle>
-            <MagazineGrid>
-              <MagazineCard>
-                <MagazineImage
-                  src="/images/magazine/BLOOM OPSIDIAN magazine.png"
-                  alt="Magazine 1"
-                />
-                <MagazineContent>
-                  <MagazineHeadline>Obsidian Bloom: A Floral Darkness with a Bold, Sensual Twist</MagazineHeadline>
-                  <MagazineText>
-                    Obsidian Bloom is a bold and mysterious fragrance where
-                    florals take on a deeper, more powerful form. This isn't a
-                    typical bouquet it's elegance cloaked in shadow, made for
-                    those who love complexity and crave a scent that lingers in
-                    memory. Opening with blackcurrant, saffron, and pink pepper,
-                    Obsidian Bloom immediately evokes a warm, spicy intrigue.{" "}
-                    <a href="/magazine">Read more</a>
-                  </MagazineText>
-                </MagazineContent>
-              </MagazineCard>
-              <MagazineCard>
-                <MagazineImage
-                  src="/images/magazine/Velvet Verona magazine.png"
-                  alt="Magazine 2"
-                />
-                <MagazineContent>
-                  <MagazineHeadline>Velvet Verona: A Romantic Classic Wrapped in Warm Sophistication
-</MagazineHeadline>
-                  <MagazineText>
-                  Velvet Verona is a fragrance that whispers timeless romance through a veil of velvet warmth and refined femininity. Inspired by the soul of Verona the city of love this scent feels like poetry made perfume.
-
-It opens with juicy bergamot, ripe plum, and pear nectar, a fruity touch that is both fresh and inviting{" "}
-                    <a href="/magazine">Read more</a>
-                  </MagazineText>
-                </MagazineContent>
-              </MagazineCard>
-            </MagazineGrid>
-          </MagazineSection>
-        </>
-      )}
+        )}
+      </section>
       <Footer />
-    </Container>
+    </PageContainer>
   );
 };
 

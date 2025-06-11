@@ -11,7 +11,7 @@ const LoginContainer = styled.div`
   height: 100vh;
   width: 100vw;
   font-family: 'Noto Serif', serif;
-  background-color: #000000;
+  background-color: #01080F;
   position: fixed;
   top: 0;
   left: 0;
@@ -23,7 +23,7 @@ const LoginBox = styled.div`
   display: flex;
   width: 700px;
   height: 480px;
-  background: #121212;
+  background: #091018;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 0 15px rgba(214, 175, 65, 0.3);
@@ -85,7 +85,7 @@ const InputLabel = styled.label`
 `;
 
 const InputField = styled.input`
-  width: 100%;
+  width: 240px;
   padding: 0.6rem 0.8rem;
   padding-right: 2.5rem;
   background: #000000;
@@ -106,7 +106,7 @@ const InputField = styled.input`
 
 const TogglePassword = styled.span`
   position: absolute;
-  right: 10px;
+  left: 210px;
   top: 30px;
   cursor: pointer;
   color: #D6B341;
@@ -114,15 +114,15 @@ const TogglePassword = styled.span`
 `;
 
 const LoginButton = styled.button`
-  width: 80%;
-  padding: 0.6rem;
+  width: 240px; 
+  padding: 0.8rem; 
   background-color: #D6B341;
   color: #000000;
   border: none;
   border-radius: 30px;
-  font-size: 0.85rem;
+  font-size: 1rem; 
   cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 1rem; 
   transition: all 0.3s;
   text-transform: uppercase;
   font-weight: bold;
@@ -133,7 +133,6 @@ const LoginButton = styled.button`
     color: #ffffff;
   }
 `;
-
 const SignUpText = styled.div`
   margin-top: 0.5rem;
   font-size: 10px;

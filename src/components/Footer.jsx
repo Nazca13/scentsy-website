@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 const FooterContainer = styled.footer`
-  background-color: #000000; 
-  padding: 60px;
+background-color: #091018;
+padding: 60px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -32,8 +32,8 @@ const FooterHeading = styled.h4`
 `;
 
 const FooterLink = styled.p`
-  color: white;
-  margin-bottom: 12px;
+color: #F5F5F5;
+margin-bottom: 12px;
   cursor: pointer;
   transition: color 0.3s ease;
   

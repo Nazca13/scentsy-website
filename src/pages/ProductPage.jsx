@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchProductById } from "../services/productService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import products from "../data/ProductsData";
+import { useAuth } from "../contexts/AuthContext";
 
+// Loader Styles
 const LoaderOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(15, 15, 15, 0.8);
+  background-color: rgba(1, 8, 15, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,14 +53,15 @@ const Loader = styled.div`
   }
 `;
 
-const Wrapper = styled.div` 
-  background-color: #000;
-  color: white;
-  font-family: 'Georgia', serif;
+// Main Container Styles
+const Wrapper = styled.div`
+  background-color: #01080F;
+  color: #F5F5F5;
+  font-family: 'Noto Serif', serif;
   min-height: 100vh;
 `;
 
-const Container = styled.div`
+const DetailContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -67,6 +70,7 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
+// Product Image Styles
 const ImageWrapper = styled.div`
   flex: 1;
   min-width: 300px;
@@ -78,6 +82,8 @@ const ProductImage = styled.img`
   max-width: 500px;
   border: 3px solid #d6b341;
   border-radius: 8px;
+  object-fit: contain;
+  background-color: #000;
 `;
 
 const DiscountLabel = styled.div`
@@ -92,6 +98,7 @@ const DiscountLabel = styled.div`
   border-radius: 4px;
 `;
 
+// Product Info Styles
 const Info = styled.div`
   flex: 1;
   min-width: 300px;
@@ -139,6 +146,7 @@ const VolumePrice = styled.div`
   color: #ccc;
 `;
 
+// Button Styles
 const ButtonGroup = styled.div`
   display: flex;
   gap: 10px;
@@ -201,29 +209,83 @@ const GoldButton = styled.button`
   }
 `;
 
-const Notes = styled.div`
-  margin-top: 20px;
-  font-size: 14px;
-  color: #ccc;
-  white-space: pre-wrap;
-  line-height: 1.6;
+const AdminButton = styled(GoldButton)`
+  background-color: #dc3545;
+  color: white;
+  
+  &:hover {
+    background-color: #c82333;
+  }
 `;
 
 const ProductPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const foundProduct = products.find((p) => p.id === id);
-      setProduct(foundProduct);
-      setLoading(false);
-    }, 800);
+    const loadProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchProductById(id);
+        if (response.data) {
+          setProduct(response.data);
+        } else {
+          setError("Product not found");
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load product");
+        console.error("Error loading product:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    loadProduct();
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (!user) {
+      alert("Please login to add items to cart");
+      navigate("/login");
+      return;
+    }
+    // Implement your cart logic here
+    console.log(`Added ${quantity} of ${product.name} to cart`);
+    alert(`${quantity} ${product.name} added to cart`);
+  };
+
+  const handleBuyNow = () => {
+    if (!user) {
+      alert("Please login to proceed with purchase");
+      navigate("/login");
+      return;
+    }
+    // Implement your checkout logic here
+    navigate("/checkout", { state: { product, quantity } });
+  };
+
+  const handleEditProduct = () => {
+    navigate(`/admin/product/${id}`);
+  };
+
+  const handleDeleteProduct = async () => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        // Implement your delete API call here
+        // await deleteProduct(id);
+        alert("Product deleted successfully");
+        navigate("/collection");
+      } catch (err) {
+        alert("Failed to delete product");
+        console.error("Error deleting product:", err);
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -235,13 +297,29 @@ const ProductPage = () => {
     );
   }
 
-  if (!product) {
+  if (error || !product) {
     return (
       <Wrapper>
         <Navbar />
-        <div style={{ color: "white", padding: "2rem", textAlign: "center" }}>
-          Product not found.
-        </div>
+        <DetailContainer>
+          <div style={{ color: "white", textAlign: "center", width: "100%", padding: "40px" }}>
+            <h2>{error || "Product not found"}</h2>
+            <button 
+              onClick={() => navigate("/collection")} 
+              style={{
+                marginTop: "20px",
+                padding: "10px 20px",
+                backgroundColor: "#d6b341",
+                color: "black",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+              Back to Collection
+            </button>
+          </div>
+        </DetailContainer>
         <Footer />
       </Wrapper>
     );
@@ -250,54 +328,57 @@ const ProductPage = () => {
   return (
     <Wrapper>
       <Navbar />
-      <Container>
+      <DetailContainer>
         <ImageWrapper>
-          <ProductImage src={product.image} alt={product.name} />
+          <ProductImage
+            src={product.image}
+            alt={product.name}
+            onError={(e) => {
+              e.target.src = "/images/default-product.jpg";
+            }}
+          />
           {product.discount && <DiscountLabel>{product.discount}</DiscountLabel>}
         </ImageWrapper>
+
         <Info>
           <Title>{product.name}</Title>
+          
           <PriceRow>
             ${product.price.toFixed(2)}
             {product.originalPrice && (
               <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
             )}
           </PriceRow>
+          
           <Description>{product.description}</Description>
+          
           <Rating>
             ★ {product.rating} ({product.reviews} reviews)
           </Rating>
+          
           <VolumePrice>
             Volume: {product.volume} • ${product.price.toFixed(2)}
           </VolumePrice>
+          
           <ButtonGroup>
             <QtyButton>
-              <button 
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                aria-label="Decrease quantity"
-              >
-                -
-              </button>
+              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>-</button>
               <span>{quantity}</span>
-              <button 
-                onClick={() => setQuantity((q) => q + 1)}
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
+              <button onClick={() => setQuantity((q) => q + 1)}>+</button>
             </QtyButton>
-            <GoldButton>Add to Cart</GoldButton>
-            <GoldButton>Buy Now</GoldButton>
+            
+            <GoldButton onClick={handleAddToCart}>Add to Cart</GoldButton>
+            <GoldButton onClick={handleBuyNow}>Buy Now</GoldButton>
+            
+            {user?.role === "admin" && (
+              <>
+                <GoldButton onClick={handleEditProduct}>Edit Product</GoldButton>
+                <AdminButton onClick={handleDeleteProduct}>Delete Product</AdminButton>
+              </>
+            )}
           </ButtonGroup>
-          <Notes>
-            <strong>Fragrance Notes:</strong>{"\n"}
-            Top: {product.notes.top}{"\n"}
-            Heart: {product.notes.heart}{"\n"}
-            Base: {product.notes.base}{"\n"}
-            Evokes: {product.notes.evokes}
-          </Notes>
         </Info>
-      </Container>
+      </DetailContainer>
       <Footer />
     </Wrapper>
   );

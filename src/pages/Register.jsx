@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import {BrowserRouter, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from "react-router-dom";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -37,7 +37,7 @@ const FormSection = styled.div`
   flex-direction: column;
   align-items: center;
   color: #ffffff;
-  gap: 0.5rem; /* Reduced from 0.8rem to move elements up */
+  gap: 0.5rem;
 `;
 
 const ImageSection = styled.div`
@@ -48,7 +48,7 @@ const ImageSection = styled.div`
 `;
 
 const Logo = styled.div`
-  margin-bottom: -18px; /* Adjusted from -12px to move logo up */
+  margin-bottom: -18px;
   display: flex;
   justify-content: center;
 
@@ -63,7 +63,7 @@ const SectionTitle = styled.h2`
   color: #D6B341;
   font-size: 1.1rem;
   font-weight: normal;
-  margin: -10px 0 0.3rem 0; /* Adjusted margins to move up */
+  margin: -10px 0 0.3rem 0;
   user-select: none;
   width: 80%;
   text-align: left;
@@ -72,7 +72,6 @@ const SectionTitle = styled.h2`
 const InputGroup = styled.div`
   position: relative;
   width: 80%;
-  margin-bottom: 
 `;
 
 const InputLabel = styled.label`
@@ -121,7 +120,7 @@ const RegisterButton = styled.button`
   border-radius: 30px;
   font-size: 0.85rem;
   cursor: pointer;
-  margin-top: 0.2rem; /* Reduced from 0.5rem */
+  margin-top: 0.2rem;
   transition: all 0.3s;
   text-transform: uppercase;
   font-weight: bold;
@@ -134,7 +133,7 @@ const RegisterButton = styled.button`
 `;
 
 const SignInText = styled.div`
-  margin-top: 0.3rem; /* Reduced from 0.5rem */
+  margin-top: 0.3rem;
   font-size: 10px;
   color: #ffffff;
   user-select: none;
@@ -152,11 +151,21 @@ const SignInText = styled.div`
   }
 `;
 
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+`;
+
 const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -184,10 +193,30 @@ const RegisterPage = () => {
     };
   }, []);
 
-  const handleRegister = () => {
-    console.log("Register:", { name, email, password });
-    alert("Registrasi berhasil!");
-    navigate("/login"); 
+  const handleRegister = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Gagal registrasi.");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("✅ Registrasi berhasil:", data);
+      alert("Registrasi berhasil!");
+      navigate("/login");
+    } catch (err) {
+      console.error("❌ Error:", err);
+      setError("Terjadi kesalahan koneksi ke server.");
+    }
   };
 
   return (
@@ -197,6 +226,8 @@ const RegisterPage = () => {
           <Logo>
             <img src="/images/SCENTSY TITLE.png" alt="SCNTSY Logo" />
           </Logo>
+
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
           <SectionTitle>Sign up</SectionTitle>
 

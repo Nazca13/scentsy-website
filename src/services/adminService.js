@@ -1,3 +1,4 @@
+//services/adminService.js
 import API from './api';
 
 export const fetchAdminData = async () => {

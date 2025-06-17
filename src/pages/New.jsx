@@ -1,440 +1,285 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { useNavigate, Link } from "react-router-dom";
 
-const LoaderOverlay = styled.div`
+const LoginContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Noto Serif', serif;
+  background-color: #01080F;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(15, 15, 15, 0.8);
+  overflow: hidden;
+  touch-action: none;
+`;
+
+const LoginBox = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-`;
-
-const LoaderWrapper = styled.div`
-  width: 80px;
-  height: 80px;
-`;
-
-const Loader = styled.div`
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  border: 6px solid transparent;
-  border-top: 6px solid #d6b341;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    right: 6px;
-    bottom: 6px;
-    border: 4px solid #ffffff10;
-    border-radius: 50%;
-    box-shadow: 0 0 20px #d6b34150;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-
-const PageWrapper = styled.div`
-  font-family: "Noto Serif", serif;
+  width: 700px;
+  height: 480px;
   background: #091018;
-  color: #F5F5F5;
-  min-height: 100vh;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(214, 175, 65, 0.3);
+  border: 2px solid #FAFAFA;
+  user-select: none;
+`;
+
+const FormSection = styled.div`
+  width: 350px;
+  padding: 1.5rem;
+  padding-top: 1rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  gap: 0.5rem;
+`;
+
+const ImageSection = styled.div`
+  width: 350px;
+  background: url('/images/2774d934efde1c114f3bdefe2c8aecfd.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.8;
+`;
+
+const Logo = styled.div`
+  margin-bottom: -18px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+  }
 `;
 
 const SectionTitle = styled.h2`
-  text-align: center;
-  font-size: 30px;
-  color: #d6b341;
-  margin-top: 40px;
-  margin-bottom: 24px;
+  color: #D6B341;
+  font-size: 1.1rem;
+  font-weight: normal;
+  margin: -10px 0 0.3rem 0;
+  user-select: none;
+  width: 80%;
+  text-align: left;
 `;
 
-const LineDivider = styled.div`
-  width: 1100px;
-  height: 1px;
-  background-color: white;
-  margin: 0 auto 30px auto;
-  border-radius: 1px;
-
-  @media (max-width: 1200px) {
-    width: 90%;
-  }
-`;
-
-const GenderTitle = styled.h3`
-  text-align: start;
-  font-size: 28px;
-  color: #ffffff;
-  margin-top: 40px;
-  margin-bottom: 2px;
-  margin-left: 84px;
-  font-family: "Noto Serif", serif;
-`;
-
-const GenderDivider = styled.div`
-  width: ${(props) => props.width || "64px"};
-  height: 4px;
-  background-color: #d6b341;
-  margin: 0 auto 25px auto;
-  border-radius: 2px;
-  margin-left: 84px;
-  margin-bottom: 10px;
-`;
-
-const ProductGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  column-gap: 36px;
-  row-gap: 30px;
-  padding: 20px 80px;
-  justify-content: center;
-
-  @media (max-width: 1000px) {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    padding: 20px 30px;
-  }
-`;
-
-const Card = styled.div`
-background: #091018;
-border-radius: 8px;
-  overflow: hidden;
-  color: white;
-  box-shadow: 0 0 6px rgba(214, 179, 65, 0.25);
-  display: flex;
-  flex-direction: column;
-  font-size: 10px;
-  width: 220px;
-`;
-
-const ProductImageWrapper = styled.div`
+const InputGroup = styled.div`
   position: relative;
-  border: 1.5px solid #d6b341;
-  border-radius: 8px;
-  overflow: hidden;
-  width: 90%;
-  height: 90%;
-  margin: 0 auto;
-  aspect-ratio: 1 / 1;
-  background-color: #000;
+  width: 80%;
 `;
 
-const ProductImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-`;
-
-const DiscountBadge = styled.div`
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  background: red;
-  color: white;
-  font-weight: bold;
+const InputLabel = styled.label`
+  display: block;
+  color: #D6B341;
+  margin-bottom: 0.3rem; 
   font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  user-select: none;
 `;
 
-const ProductInfo = styled.div`
-  padding: 6px 8px;
-`;
-
-const ProductName = styled.h6`
-  color: #d6b341;
+const InputField = styled.input`
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  padding-right: 2.5rem;
+  background: #000000;
+  border: 1px solid #FAFAFA;
+  border-radius: 15px;
   font-size: 12px;
-  margin: 0;
-  text-align: left;
-`;
+  color: #ffffff;
 
-const ProductDescription = styled.p`
-  font-size: 9px;
-  color: #ccc;
-  margin: 2px 0;
-  text-align: left;
-`;
+  &:focus {
+    outline: none;
+    border-color: #ffffff;
+  }
 
-const DescriptionRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 2px;
-  margin-bottom: 6px;
-`;
-
-const ProductVolume = styled.div`
-  font-size: 9px;
-  color: #ccc;
-  text-align: right;
-`;
-
-const Rating = styled.div`
-  color: red;
-  font-size: 9px;
-  margin-bottom: 6px;
-
-  span {
-    color: red;
+  &::placeholder {
+    color: #555555;
   }
 `;
 
-const BottomWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 0 8px 10px;
-`;
-
-const OldPrice = styled.div`
-  color: #888;
-  text-decoration: line-through;
-  font-size: 8px;
-`;
-
-const NewPrice = styled.div`
-  color: #d6b341;
-  font-weight: bold;
-  font-size: 11px;
-`;
-
-const BuyButton = styled.button`
-  background: #d6b341;
-  color: #000;
-  border: none;
-  padding: 8px 22px;
-  border-radius: 1px;
-  font-weight: bold;
-  font-size: 9px;
+const TogglePassword = styled.span`
+  position: absolute;
+  right: 10px;
+  top: 30px;
   cursor: pointer;
-  transition: background 0.3s;
+  color: #D6B341;
+  user-select: none;
+`;
+
+const RegisterButton = styled.button`
+  width: 80%;
+  padding: 0.6rem;
+  background-color: #D6B341;
+  color: #000000;
+  border: none;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  font-weight: bold;
+  user-select: none;
 
   &:hover {
-    background: #b8912f;
+    background-color: #c9a235;
+    color: #ffffff;
   }
 `;
 
-const PriceWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+const SignInText = styled.div`
+  margin-top: 0.3rem;
+  font-size: 10px;
+  color: #ffffff;
+  user-select: none;
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 4px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #D6B341;
+    }
+  }
 `;
 
-const New = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const ErrorMessage = styled.div`
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 14px;
+`;
+
+const RegisterPage = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const dummyData = [
-    {
-      _id: "bloom-opsidian",
-      name: "Bloom Opsidian EDP",
-      description: "Bold, Rare, Exotic",
-      price: 163.0,
-      originalPrice: 327.0,
-      discount: "-45%",
-      rating: 4.9,
-      ratingCount: 634,
-      image: "/images/parfumes/BLOOM OPSIDIAN.png",
-      volume: "125 ml",
-    },
-    {
-      _id: "royale-saphir",
-      name: "Royale Saphir EDP",
-      description: "Bright, Clean, Refined",
-      price: 148.0,
-      originalPrice: 165.0,
-      discount: "-30%",
-      rating: 4.9,
-      ratingCount: 312,
-      image: "/images/parfumes/Royale Saphir.png",
-      volume: "90 ml",
-    },
-    {
-      _id: "imperium-nature",
-      name: "Imperium Nature EDP",
-      description: "Noble, Wild, Majestic",
-      volume: "50ml",
-      rating: 4.9,
-      ratingCount: 482,
-      originalPrice: 167.0,
-      price: 133.0,
-      discount: "-20%",
-      image: "/images/parfumes/Imperium Nature.png",
-    },
-    {
-      _id: "velour-noire",
-      name: "Velour Noire EDP",
-      description: "Smooth, Sensual, NightTime",
-      volume: "65ml",
-      rating: 4.9,
-      ratingCount: 471,
-      originalPrice: 187.0,
-      price: 149.0,
-      discount: "-20%",
-      image: "/images/parfumes/VELOUR.png",
-    },
-    {
-      _id: "cuir-dor",
-      name: "Cuir D.OR EDP",
-      description: "Exquisite, Signature, Rich",
-      price: 138.0,
-      originalPrice: 172.0,
-      discount: "-30%",
-      rating: 4.9,
-      ratingCount: 390,
-      image: "/images/parfumes/cuir d.or.png",
-      volume: "90 ml",
-    },
-    {
-      _id: "crimson-elan",
-      name: "Crimson Elan EDP",
-      description: "Sensuous, Confident, Bold",
-      price: 160.0,
-      originalPrice: 198.0,
-      discount: "-20%",
-      rating: 4.9,
-      ratingCount: 410,
-      image: "/images/parfumes/Crimson Elan.png",
-      volume: "75 ml",
-    },
-    {
-      _id: "riche-essence",
-      name: "Riche Eseence EDP",
-      description: "Radiant, Orange, Rich",
-      price: 172.0,
-      originalPrice: 199.0,
-      discount: "-30%",
-      rating: 4.9,
-      ratingCount: 475,
-      image: "/images/parfumes/Riche Essence.png",
-      volume: "95 ml",
-    },
-    {
-      _id: "maison-celeste",
-      name: "Maison Celeste EDP",
-      description: "Glamour, Soft, Lift",
-      price: 135.0,
-      originalPrice: 165.0,
-      discount: "-20%",
-      rating: 4.9,
-      ratingCount: 332,
-      image: "/images/parfumes/Maison Celeste.png",
-      volume: "90 ml",
-    }
-  ];
-
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setProducts(dummyData);
-      setLoading(false);
-    }, 500);
+    const img = new Image();
+    img.src = "public/images/SCENTSY TITLE.png";
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+
+    const preventZoom = (e) => {
+      if (e.touches.length > 1) e.preventDefault();
+    };
+
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+    document.addEventListener('gesturestart', preventZoom);
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      document.body.style.position = '';
+      document.removeEventListener('touchmove', preventZoom);
+      document.removeEventListener('gesturestart', preventZoom);
+    };
   }, []);
 
-  if (loading) {
-    return (
-      <LoaderOverlay>
-        <LoaderWrapper>
-          <Loader />
-        </LoaderWrapper>
-      </LoaderOverlay>
-    );
-  }
+  const handleRegister = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-  if (error) return <div>Error: {error}</div>;
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Gagal registrasi.");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("✅ Registrasi berhasil:", data);
+      alert("Registrasi berhasil!");
+      navigate("/login");
+    } catch (err) {
+      console.error("❌ Error:", err);
+      setError("Terjadi kesalahan koneksi ke server.");
+    }
+  };
 
   return (
-    <PageWrapper>
-      <Navbar />
-      <SectionTitle>NEW COLLECTION</SectionTitle>
-      <LineDivider />
+    <LoginContainer>
+      <LoginBox>
+        <FormSection>
+          <Logo>
+            <img src="/images/SCENTSY TITLE.png" alt="SCNTSY Logo" />
+          </Logo>
 
-      <GenderTitle>MEN</GenderTitle>
-      <GenderDivider width="64px" />
-      <ProductGrid>
-        {products.slice(0, 4).map((product) => (
-          <Card key={product._id}>
-            <ProductImageWrapper>
-              <DiscountBadge>{product.discount}</DiscountBadge>
-              <ProductImage src={product.image} alt={product.name} />
-            </ProductImageWrapper>
-            <ProductInfo>
-              <ProductName>{product.name}</ProductName>
-              <DescriptionRow>
-                <ProductDescription>{product.description}</ProductDescription>
-                <ProductVolume>{product.volume}</ProductVolume>
-              </DescriptionRow>
-              <Rating>
-                ★ {product.rating} <span>({product.ratingCount})</span>
-              </Rating>
-              <BottomWrapper>
-                <PriceWrapper>
-                  <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
-                  <NewPrice>${product.price.toFixed(2)}</NewPrice>
-                </PriceWrapper>
-                <BuyButton onClick={() => navigate(`/product/${product._id}`)}>
-                  BUY NOW
-                </BuyButton>
-              </BottomWrapper>
-            </ProductInfo>
-          </Card>
-        ))}
-      </ProductGrid>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
 
-      <GenderTitle>WOMEN</GenderTitle>
-      <GenderDivider width="116px" />
-      <ProductGrid>
-        {products.slice(4).map((product) => (
-          <Card key={product._id}>
-            <ProductImageWrapper>
-              <DiscountBadge>{product.discount}</DiscountBadge>
-              <ProductImage src={product.image} alt={product.name} />
-            </ProductImageWrapper>
-            <ProductInfo>
-              <ProductName>{product.name}</ProductName>
-              <DescriptionRow>
-                <ProductDescription>{product.description}</ProductDescription>
-                <ProductVolume>{product.volume}</ProductVolume>
-              </DescriptionRow>
-              <Rating>
-                ★ {product.rating} <span>({product.ratingCount})</span>
-              </Rating>
-              <BottomWrapper>
-                <PriceWrapper>
-                  <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
-                  <NewPrice>${product.price.toFixed(2)}</NewPrice>
-                </PriceWrapper>
-                <BuyButton onClick={() => navigate(`/product/${product._id}`)}>
-                  BUY NOW
-                </BuyButton>
-              </BottomWrapper>
-            </ProductInfo>
-          </Card>
-        ))}
-      </ProductGrid>
+          <SectionTitle>Sign up</SectionTitle>
 
-      <Footer />
-    </PageWrapper>
+          <InputGroup>
+            <InputLabel>Name</InputLabel>
+            <InputField 
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+            />
+          </InputGroup>
+
+          <InputGroup>
+            <InputLabel>Email</InputLabel>
+            <InputField 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+            />
+          </InputGroup>
+
+          <InputGroup>
+            <InputLabel>Password</InputLabel>
+            <InputField 
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+            <TogglePassword onClick={() => setShowPassword(!showPassword)}>
+              <img 
+                src={showPassword ? "/images/after.png" : "/images/before.png"} 
+                alt="toggle password visibility" 
+                style={{ width: "20px", height: "16px" }}
+              />
+            </TogglePassword>
+          </InputGroup>
+
+          <RegisterButton onClick={handleRegister}>SIGN UP</RegisterButton>
+
+          <SignInText>
+            Already have an account?
+            <Link to="/login">Sign in now</Link>
+          </SignInText>
+        </FormSection>
+
+        <ImageSection />
+      </LoginBox>
+    </LoginContainer>
   );
 };
 
-export default New;
+export default RegisterPage;

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { fetchProducts } from "../api";
+import { fetchProducts } from "../Api";
 
 const PageWrapper = styled.div`
   font-family: "Noto Serif", serif;

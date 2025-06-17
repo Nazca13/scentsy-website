@@ -1,3 +1,5 @@
+//hooks/useAuth.js
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, register, getCurrentUser, logout } from '../services/auth';

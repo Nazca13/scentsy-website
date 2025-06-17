@@ -1,4 +1,5 @@
 // src/hooks/useProfile.js
+
 import { useState, useEffect } from 'react';
 import { 
   fetchUserProfile, 

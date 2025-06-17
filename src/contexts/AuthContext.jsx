@@ -1,3 +1,5 @@
+//contexts/AuthContext.jsx
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getCurrentUser, login as apiLogin, logout as apiLogout } from '../services/auth';
 

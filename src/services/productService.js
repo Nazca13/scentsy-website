@@ -6,6 +6,7 @@ export const fetchProducts = async (params = {}) => {
   return response.data;
 };
 
+// ✅ Tambahkan ini
 export const fetchProductById = async (id) => {
   const response = await API.get(`/products/${id}`);
   return response.data;
@@ -13,17 +14,13 @@ export const fetchProductById = async (id) => {
 
 export const createProduct = async (productData) => {
   const formData = new FormData();
-  
   Object.entries(productData).forEach(([key, value]) => {
     if (value !== null && value !== undefined) {
       formData.append(key, value);
     }
   });
-
   const response = await API.post('/products', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 };

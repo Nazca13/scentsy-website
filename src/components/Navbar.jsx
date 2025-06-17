@@ -1,3 +1,5 @@
+//components/Navbar.js
+
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';

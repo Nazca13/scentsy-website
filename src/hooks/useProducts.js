@@ -1,6 +1,8 @@
+//hooks/useProducts.js
+
 import { useEffect } from 'react';
 import { useApi } from './useApi';
-import { fetchProducts, fetchProductById } from '../api';
+import { fetchProducts, fetchProductById } from '../Api';
 
 export const useProducts = (params = {}) => {
   const { data, error, loading, request } = useApi(fetchProducts);

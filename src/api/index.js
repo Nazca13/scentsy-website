@@ -1,16 +1,18 @@
+//Api/index.js
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL + '/api', // Pastikan sudah tambah `/api`
   withCredentials: true,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+    'Accept': 'application/json',
+  },
 });
 
-// Request interceptor
+
+// Request interceptor  
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

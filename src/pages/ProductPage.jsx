@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchProductById } from "../services/productService";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useProduct } from '../hooks/useProducts';
+import { useCart } from '../hooks/useCart';
 import { useAuth } from "../contexts/AuthContext";
 
 // Loader Styles
@@ -221,42 +222,29 @@ const AdminButton = styled(GoldButton)`
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { product, loading, error } = useProduct(id);
+  const { addItem } = useCart();
   const { user } = useAuth();
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  
   const [quantity, setQuantity] = useState(1);
-  const [error, setError] = useState("");
+  const [selectedVolume, setSelectedVolume] = useState('50ml');
+  const [activeTab, setActiveTab] = useState('description');
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchProductById(id);
-        if (response.data) {
-          setProduct(response.data);
-        } else {
-          setError("Product not found");
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to load product");
-        console.error("Error loading product:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#091018', color: '#D6B341' }}>
+      Loading...
+    </div>
+  );
 
-    loadProduct();
-  }, [id]);
+  if (error || !product) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#091018', color: '#ff6b6b' }}>
+      {error || "Product not found"}
+    </div>
+  );
 
-  const handleAddToCart = () => {
-    if (!user) {
-      alert("Please login to add items to cart");
-      navigate("/login");
-      return;
-    }
-    // Implement your cart logic here
-    console.log(`Added ${quantity} of ${product.name} to cart`);
-    alert(`${quantity} ${product.name} added to cart`);
+  const handleAddToCart = async () => {
+    await addItem(product);
+    alert('Added to cart!');
   };
 
   const handleBuyNow = () => {
@@ -304,8 +292,8 @@ const ProductPage = () => {
         <DetailContainer>
           <div style={{ color: "white", textAlign: "center", width: "100%", padding: "40px" }}>
             <h2>{error || "Product not found"}</h2>
-            <button 
-              onClick={() => navigate("/collection")} 
+            <button
+              onClick={() => navigate("/collection")}
               style={{
                 marginTop: "20px",
                 padding: "10px 20px",
@@ -342,34 +330,34 @@ const ProductPage = () => {
 
         <Info>
           <Title>{product.name}</Title>
-          
+
           <PriceRow>
             ${product.price.toFixed(2)}
             {product.originalPrice && (
               <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
             )}
           </PriceRow>
-          
+
           <Description>{product.description}</Description>
-          
+
           <Rating>
             ★ {product.rating} ({product.reviews} reviews)
           </Rating>
-          
+
           <VolumePrice>
             Volume: {product.volume} • ${product.price.toFixed(2)}
           </VolumePrice>
-          
+
           <ButtonGroup>
             <QtyButton>
               <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>-</button>
               <span>{quantity}</span>
               <button onClick={() => setQuantity((q) => q + 1)}>+</button>
             </QtyButton>
-            
+
             <GoldButton onClick={handleAddToCart}>Add to Cart</GoldButton>
             <GoldButton onClick={handleBuyNow}>Buy Now</GoldButton>
-            
+
             {user?.role === "admin" && (
               <>
                 <GoldButton onClick={handleEditProduct}>Edit Product</GoldButton>

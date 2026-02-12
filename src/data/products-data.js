@@ -1,6 +1,6 @@
 const products = [
   {
-    id: "bloom-opsidian",
+    _id: "bloom-opsidian",
     name: "Bloom Opsidian EDP",
     image: "/images/parfumes/BLOOM OPSIDIAN.png",
     price: 163.0,
@@ -10,7 +10,9 @@ const products = [
       "Where florals bloom in shadow. Seductive, enigmatic, and darkly refined.",
     volume: "125ml",
     rating: "4.9",
-    reviews: 634,
+    ratingCount: 634,
+    gender: "women",
+    category: "best-seller",
     notes: {
       top: "Blackcurrant, Saffron, Pink Pepper",
       heart: "Night-Blooming Jasmine, Damask Rose, Violet Leaf",
@@ -19,7 +21,7 @@ const products = [
     },
   },
   {
-    id: "nocturne-elexir",
+    _id: "nocturne-elexir",
     name: "Nocturne Elexir EDP",
     image: "/images/parfumes/Nocturne Elexir.png",
     price: 171,
@@ -29,7 +31,9 @@ const products = [
       "Magic potion. Sensual and exotic aroma that is perfect to accompany a phenomenal night.",
     volume: "85 ml",
     rating: 4.9,
-    reviews: 712,
+    ratingCount: 712,
+    gender: "women",
+    category: "new",
     notes: {
       top: "Black plum, cinnamon",
       heart: "Tuberose, incense, red wine accord",
@@ -38,7 +42,7 @@ const products = [
     },
   },
   {
-    id: "velour-noire",
+    _id: "velour-noire",
     name: "Velour Noire EDP",
     image: "/images/parfumes/VELOUR.png",
     price: 149.0,
@@ -48,7 +52,9 @@ const products = [
       "French for “black.” Timeless. Minimal. Chic. A powerfully elegant identity.",
     volume: "65ml",
     rating: "4.9",
-    reviews: 471,
+    ratingCount: 471,
+    gender: "men",
+    category: "classic",
     notes: {
       top: "Bergamot, Black Pepper",
       heart: " Black Rose, Suede Leather",
@@ -57,7 +63,7 @@ const products = [
     },
   },
   {
-    id: "imperium-nature",
+    _id: "imperium-nature",
     name: "Imperium Nature EDP",
     image: "/images/parfumes/Imperium Nature.png",
     price: 133.0,
@@ -67,7 +73,9 @@ const products = [
       "Wild elegance meets regal strength. A tribute to power, untamed and noble.",
     volume: "50ml",
     rating: "4.9",
-    reviews: 482,
+    ratingCount: 482,
+    gender: "men",
+    category: "nature",
     notes: {
       top: "Juniper Berries, Wild Citrus, Sage",
       heart: "Fir Balsam, Vetiver, Cedar",
@@ -76,7 +84,7 @@ const products = [
     },
   },
   {
-    id: "jardin-sauvage",
+    _id: "jardin-sauvage",
     name: "Jardin Sauvage EDP",
     image: "/images/parfumes/Jardin Sauvage.png",
     price: 135.0,
@@ -86,7 +94,9 @@ const products = [
       "A bohemian garden, untrimmed and alive. Fresh, free, and full of soul.",
     volume: "85ml",
     rating: "4.9",
-    reviews: 412,
+    ratingCount: 412,
+    gender: "unisex",
+    category: "nature",
     notes: {
       top: "Green Apple, Basil, Lemon Verbena",
       heart: " Lavender, Geranium, Wild Rose",
@@ -95,7 +105,7 @@ const products = [
     },
   },
   {
-    id: "royale-saphir",
+    _id: "royale-saphir",
     name: "Royale Saphir EDP",
     image: "/images/parfumes/Royale Saphir.png",
     price: 148.0,
@@ -105,7 +115,9 @@ const products = [
       "A scent of regal clarity. Fresh yet dignified, made for modern royalty.",
     volume: "65ml",
     rating: "4.9",
-    reviews: 579,
+    ratingCount: 579,
+    gender: "women",
+    category: "luxury",
     notes: {
       top: " Sicilian Lemon, Pink Pepper, Bergamot",
       heart: "Clary Sage, Neroli, White Tea",
@@ -114,7 +126,7 @@ const products = [
     },
   },
   {
-    id: "noir",
+    _id: "noir",
     name: "NOIR EDP",
     image: "/images/parfumes/NOIR.png",
     price: 164.0,
@@ -124,7 +136,9 @@ const products = [
       "French for “black” timeless, minimal, chic. A powerfully elegant identity.",
     volume: "85 ml",
     rating: 4.9,
-    reviews: 677,
+    ratingCount: 677,
+    gender: "men",
+    category: "best-seller",
     notes: {
       top: "Bergamot, black pepper",
       heart: " Black rose, leather",
@@ -132,10 +146,8 @@ const products = [
       evokes: "Bold - Minimalist - Iconic - Masculine - Dark - Classic",
     },
   },
-
-  
   {
-    id: "velvet-verona",
+    _id: "velvet-verona",
     name: "Velvet Verona EDP",
     image: "/images/parfumes/Velvet Verona.png",
     price: 132.0,
@@ -145,7 +157,9 @@ const products = [
       "italian for velvet allure opulent, seductive, timeless, A touch of decadence woven in darkness",
     volume: "85 ml",
     rating: 4.9,
-    reviews: 677,
+    ratingCount: 677,
+    gender: "unisex",
+    category: "luxury",
     notes: {
       top: " Black pepper, saffron",
       heart: "Velvet rose, suede, oud",
@@ -154,7 +168,7 @@ const products = [
     },
   },
   {
-    id: "riche-essence",
+    _id: "riche-essence",
     name: "Riche Essence EDP",
     image: "/images/parfumes/Riche Essence.png",
     price: 172.0,
@@ -163,7 +177,9 @@ const products = [
     description: "Lush florals and richness refined. A tribute to elegant indulgence.",
     volume: "125ml",
     rating: "4.9",
-    reviews: 561,
+    ratingCount: 561,
+    gender: "women",
+    category: "luxury",
     notes: {
       top: "Peach Nectar, Neroli, Mandarin",
       heart: " Ylang-Ylang, Tuberose, Rose Absolute",
@@ -172,7 +188,7 @@ const products = [
     },
   },
   {
-    id: "crimson-elan",
+    _id: "crimson-elan",
     name: "Crimson Élan EDP",
     image: "/images/parfumes/Crimson Elan.png",
     price: 149.0,
@@ -181,7 +197,9 @@ const products = [
     description: "Glamorous, Confident, Rich",
     volume: "75ml",
     rating: "4.9",
-    reviews: 446,
+    ratingCount: 446,
+    gender: "women",
+    category: "party",
     notes: {
       top: "Black plum, cinnamon",
       heart: "Tuberose, incense, red wine accord",
@@ -190,7 +208,7 @@ const products = [
     },
   },
   {
-    id: "cuir-dor",
+    _id: "cuir-dor",
     name: "Cuir D.OR EDP",
     image: "/images/parfumes/cuir d.or.png",
     price: 138.0,
@@ -199,7 +217,9 @@ const products = [
     description: "A golden signature rich leather and gilded warmth, made to leave a mark.",
     volume: "65ml",
     rating: "4.9",
-    reviews: 411,
+    ratingCount: 411,
+    gender: "men",
+    category: "luxury",
     notes: {
       top: "Mandarin, Saffron, Nutmeg",
       heart: "Suede Leather, Orris Butter, Labdanum",
@@ -208,7 +228,7 @@ const products = [
     },
   },
   {
-    id: "maison-celeste",
+    _id: "maison-celeste",
     name: "Maison Celeste EDP",
     image: "/images/parfumes/Maison Celeste.png",
     price: 135.0,
@@ -217,7 +237,9 @@ const products = [
     description: "A celestial softness weightless, airy, and effortlessly graceful.",
     volume: "50ml",
     rating: "4.9",
-    reviews: 399,
+    ratingCount: 399,
+    gender: "women",
+    category: "day",
     notes: {
       top: "Pear Blossom, Aldehydes, Bergamot",
       heart: " White Peony, Jasmine Tea, Lily of the Valley",
@@ -226,7 +248,7 @@ const products = [
     },
   },
   {
-    id: "seraphine-mist",
+    _id: "seraphine-mist",
     name: "Seraphine Mist EDP",
     image: "/images/parfumes/Seraphine Mist.png",
     price: 126.0,
@@ -235,7 +257,9 @@ const products = [
     description: "Like an angel’s breath pure, delicate, and eternally serene.",
     volume: "45ml",
     rating: "4.9",
-    reviews: 511,
+    ratingCount: 511,
+    gender: "women",
+    category: "day",
     notes: {
       top: "Cotton Flower, Neroli, Pink Grapefruit",
       heart: "Freesia, Magnolia, Dewy Rose",

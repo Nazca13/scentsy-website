@@ -3,294 +3,294 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px;
-  background-color: #01080F;
-  min-height: 100vh;
-  color: #F5F5F5;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 40px;
+background-color: #01080F;
+min-height: 100vh;
+color: #F5F5F5;
 `;
 
 const Logo = styled.img`
-  height: 240px;
-  margin-top: -75px;
-  margin-bottom: -70px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
+height: 240px;
+margin-top: -75px;
+margin-bottom: -70px;
+cursor: pointer;
+transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.02);
-  }
+  transform: scale(1.02);
+}
 `;
 
 const CartContent = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
-  gap: 30px;
+display: flex;
+justify-content: center;
+width: 100%;
+max-width: 1200px;
+gap: 30px;
 `;
 
 const CartItemsContainer = styled.div`
-  flex: 2;
+flex: 2;
 `;
 
 const CartItem = styled.div`
-  background-color: #091018;
-  border-radius: 8px;
-  display: flex;
-  padding: 20px;
-  margin-bottom: 20px;
-  position: relative;
+background-color: #091018;
+border-radius: 8px;
+display: flex;
+padding: 20px;
+margin-bottom: 20px;
+position: relative;
 `;
 
 const ProductCheckbox = styled.input`
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
+position: absolute;
+top: 15px;
+left: 15px;
+width: 18px;
+height: 18px;
+cursor: pointer;
 `;
 
 const ProductImage = styled.img`
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-right: 20px;
-  margin-left: 10px;
+width: 80px;
+height: 80px;
+object-fit: cover;
+border-radius: 6px;
+margin-right: 20px;
+margin-left: 10px;
 `;
 
 const ProductInfo = styled.div`
-  flex: 2;
-  display: flex;
-  flex-direction: column;
+flex: 2;
+display: flex;
+flex-direction: column;
 `;
 
 const ProductName = styled.h3`
-  margin: 0 0 8px 0;
-  font-size: 16px;
+margin: 0 0 8px 0;
+font-size: 16px;
 `;
 
 const Volume = styled.div`
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 8px;
+font-size: 14px;
+color: #ccc;
+margin-bottom: 8px;
 `;
 
 const RemoveButton = styled.button`
-  background: none;
-  color: red;
-  padding: 0;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  text-align: left;
-  margin-top: 10px;
+background: none;
+color: red;
+padding: 0;
+border: none;
+font-size: 14px;
+cursor: pointer;
+text-align: left;
+margin-top: 10px;
 `;
 
 const DetailInfo = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
 `;
 
 const Label = styled.div`
-  font-weight: bold;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #ccc;
+font-weight: bold;
+margin-bottom: 8px;
+font-size: 14px;
+color: #ccc;
 `;
 
 const Value = styled.div`
-  font-size: 16px;
+font-size: 16px;
 `;
 
 const QuantityControl = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 5px;
+display: flex;
+align-items: center;
+gap: 10px;
+margin-top: 5px;
 `;
 
 const QuantityButton = styled.button`
-  background-color: red;
-  color: #fff;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-weight: bold;
+background-color: red;
+color: #fff;
+border: none;
+width: 24px;
+height: 24px;
+border-radius: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+font-weight: bold;
 `;
 
 const SummaryWrapper = styled.div`
-  flex: 1;
+flex: 1;
 `;
 
 const SummaryCard = styled.div`
-  background-color: #091018;
-  border-radius: 10px;
-  padding: 24px;
-  width: 100%;
+background-color: #091018;
+border-radius: 10px;
+padding: 24px;
+width: 100%;
 `;
 
 const SummaryTitle = styled.h2`
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: red;
+font-size: 20px;
+margin-bottom: 20px;
+text-align: center;
+color: red;
 `;
 
 const SummaryItem = styled.div`
-  margin-bottom: 16px;
-  font-size: 14px;
+margin-bottom: 16px;
+font-size: 14px;
 `;
 
 const SummaryLabel = styled.div`
-  color: #ccc;
-  margin-bottom: 4px;
+color: #ccc;
+margin-bottom: 4px;
 `;
 
 const SummaryValue = styled.div`
-  font-weight: bold;
+font-weight: bold;
 `;
 
 const CheckoutButton = styled.button`
-  margin-top: 30px;
-  background-color: red;
-  color: #fff;
-  padding: 12px;
-  border: none;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: opacity 0.3s;
+margin-top: 30px;
+background-color: red;
+color: #fff;
+padding: 12px;
+border: none;
+width: 100%;
+font-size: 16px;
+font-weight: bold;
+border-radius: 6px;
+cursor: pointer;
+text-transform: uppercase;
+transition: opacity 0.3s;
 
   &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  opacity: 0.5;
+  cursor: not - allowed;
+}
 `;
 
 const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: rgba(0, 0, 0, 0.8);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1000;
 `;
 
 const ModalContent = styled.div`
-  background-color: #091018;
-  padding: 30px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  position: relative;
+background-color: #091018;
+padding: 30px;
+border-radius: 10px;
+width: 90%;
+max-width: 500px;
+box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+position: relative;
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: #ccc;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+color: #ccc;
+font-size: 20px;
+cursor: pointer;
+padding: 5px;
 
   &:hover {
-    color: red;
-  }
+  color: red;
+}
 `;
 
 const ModalTitle = styled.h2`
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: red;
-  text-align: center;
+font-size: 24px;
+margin-bottom: 20px;
+color: red;
+text-align: center;
 `;
 
 const PaymentOption = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 15px 0;
-  padding: 15px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: ${props => props.$selected ? '#1a1a1a' : 'transparent'};
-  transition: all 0.3s ease;
+display: flex;
+align-items: center;
+margin: 15px 0;
+padding: 15px;
+border: 1px solid #333;
+border-radius: 8px;
+cursor: pointer;
+background-color: ${ props => props.$selected ? '#1a1a1a' : 'transparent' };
+transition: all 0.3s ease;
 
   &:hover {
-    border-color: red;
-  }
+  border-color: red;
+}
 `;
 
 const PaymentLabel = styled.label`
-  margin-left: 15px;
-  font-size: 16px;
-  cursor: pointer;
+margin-left: 15px;
+font-size: 16px;
+cursor: pointer;
 `;
 
 const PaymentIcon = styled.div`
-  width: 30px;
-  height: 30px;
-  background-color: red;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: bold;
+width: 30px;
+height: 30px;
+background-color: red;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #fff;
+font-weight: bold;
 `;
 
 const ConfirmButton = styled.button`
-  background-color: red;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: opacity 0.3s;
-  text-transform: uppercase;
+background-color: red;
+color: #fff;
+border: none;
+padding: 12px;
+width: 100%;
+font-size: 16px;
+font-weight: bold;
+border-radius: 6px;
+cursor: pointer;
+margin-top: 20px;
+transition: opacity 0.3s;
+text-transform: uppercase;
 
   &:hover {
-    opacity: 0.9;
-  }
+  opacity: 0.9;
+}
 `;
 
 const SuccessMessage = styled.div`
-  text-align: center;
-  padding: 20px;
+text-align: center;
+padding: 20px;
 `;
 
 const SuccessIcon = styled.div`
-  font-size: 50px;
-  color: red;
-  margin-bottom: 20px;
+font-size: 50px;
+color: red;
+margin-bottom: 20px;
 `;
 
 const CartPage = () => {
@@ -335,6 +335,28 @@ const CartPage = () => {
     if (selectedItems.length === 0) return;
     setShowModal(true);
     setOrderConfirmed(false);
+  };
+
+  const handlePaymentSuccess = async () => {
+    setIsProcessing(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log("Mock Payment Successful");
+      alert("Payment Successful! Thank you for your purchase.");
+      
+      // Clear cart (optional, you might want to add clearCart to useCart hook)
+      // await clearCart(); 
+      
+      setShowPaymentModal(false);
+      navigate("/profile");
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Payment failed. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleConfirmOrder = () => {

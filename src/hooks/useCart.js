@@ -1,20 +1,19 @@
 // src/hooks/useCart.js
 import { useState, useEffect } from 'react';
-import { getCart, addToCart, updateCartItem, removeFromCart } from '../Api/cartApi';
 
 export const useCart = () => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadCart = async () => {
+  const loadCart = () => {
     try {
       setLoading(true);
-      const data = await getCart();
-      setCart(data || []);
+      const savedCart = localStorage.getItem('cart');
+      setCart(savedCart ? JSON.parse(savedCart) : []);
       setError(null);
     } catch (err) {
-      setError(err.message || 'Failed to load cart');
+      setError('Failed to load cart');
     } finally {
       setLoading(false);
     }
@@ -24,21 +23,35 @@ export const useCart = () => {
     loadCart();
   }, []);
 
-  const addItem = async (item) => {
-    const response = await addToCart(item);
-    setCart((prev) => [...prev, response]);
+  const saveCart = (newCart) => {
+    setCart(newCart);
+    localStorage.setItem('cart', JSON.stringify(newCart));
+  };
+
+  const addItem = async (product) => {
+    const newItem = {
+      id: Date.now(), // Generate temp ID
+      productId: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1,
+      volume: product.volume,
+      selected: true
+    };
+    saveCart([...cart, newItem]);
   };
 
   const updateItem = async (id, qty) => {
-    const response = await updateCartItem(id, { quantity: qty });
-    setCart((prev) =>
-      prev.map((item) => (item.id === id ? response : item))
+    const newCart = cart.map((item) =>
+      item.id === id ? { ...item, quantity: qty } : item
     );
+    saveCart(newCart);
   };
 
   const removeItem = async (id) => {
-    await removeFromCart(id);
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    const newCart = cart.filter((item) => item.id !== id);
+    saveCart(newCart);
   };
 
   return { cart, loading, error, refresh: loadCart, addItem, updateItem, removeItem };

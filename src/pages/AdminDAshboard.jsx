@@ -1,9 +1,11 @@
 //pages/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+// Removed API imports for standalone mode
 // Services/API
+/*
 import {
   fetchProducts,
   createProduct,
@@ -19,6 +21,7 @@ import {
   fetchStatsOverview,
   fetchSalesReport
 } from '../Api/statsApi';
+*/
 
 // Auth
 import { useAuth } from '../contexts/AuthContext';
@@ -92,17 +95,25 @@ const AdminDashboard = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch semua data sekaligus
-      const [productsRes, usersRes, statsRes, salesRes] = await Promise.all([
-        fetchProducts(),
-        fetchUsers(),
-        fetchStatsOverview(),
-        fetchSalesReport()
-      ]);
+      // Mock data loading
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      setProducts(productsRes || []);
-      setUsers(usersRes || []);
-      setStats(statsRes || {});
+      setStats({
+        totalRevenue: 15400,
+        totalOrders: 142,
+        totalProducts: 24,
+        totalUsers: 85
+      });
+
+      // Mock products and users as well, or fetch them if needed
+      setProducts([
+        { _id: 'p1', name: 'Mock Product 1', price: 100, image: 'https://via.placeholder.com/100' },
+        { _id: 'p2', name: 'Mock Product 2', price: 200, image: 'https://via.placeholder.com/100' },
+      ]);
+      setUsers([
+        { _id: 'u1', name: 'Mock User 1', email: 'user1@example.com', role: 'user' },
+        { _id: 'u2', name: 'Mock Admin', email: 'admin@example.com', role: 'admin' },
+      ]);
 
     } catch (err) {
       console.error('Error loading dashboard:', err);

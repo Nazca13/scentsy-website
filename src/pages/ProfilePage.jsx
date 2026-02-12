@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useProfile } from "../hooks/useProfile";
+import { useAuth } from "../contexts/AuthContext";
 
 // --- Styled Components (diambil dari versi pertama) ---
 const ProfileContainer = styled.div`
@@ -137,7 +137,10 @@ const Message = styled.div`
 
 // --- Component ---
 const ProfilePage = () => {
-  const { profile, loading, error, updateProfile } = useProfile();
+  const { user, login } = useAuth(); // Using login to update user state if needed, or just set simple state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -149,15 +152,15 @@ const ProfilePage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    if (profile) {
+    if (user) {
       setFormData({
-        name: profile.name || '',
-        email: profile.email || '',
+        name: user.name || '',
+        email: user.email || '',
         password: '',
         confirmPassword: ''
       });
     }
-  }, [profile]);
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

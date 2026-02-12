@@ -195,23 +195,12 @@ const RegisterPage = () => {
 
   const handleRegister = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Gagal registrasi.");
-        return;
-      }
-
-      const data = await response.json();
-      console.log("✅ Registrasi berhasil:", data);
-      alert("Registrasi berhasil!");
+      // Mock success
+      console.log("✅ Registrasi berhasil");
+      alert("Registrasi berhasil! Silakan login.");
       navigate("/login");
     } catch (err) {
       console.error("❌ Error:", err);
@@ -233,7 +222,7 @@ const RegisterPage = () => {
 
           <InputGroup>
             <InputLabel>Name</InputLabel>
-            <InputField 
+            <InputField
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -243,7 +232,7 @@ const RegisterPage = () => {
 
           <InputGroup>
             <InputLabel>Email</InputLabel>
-            <InputField 
+            <InputField
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -253,16 +242,16 @@ const RegisterPage = () => {
 
           <InputGroup>
             <InputLabel>Password</InputLabel>
-            <InputField 
+            <InputField
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
             />
             <TogglePassword onClick={() => setShowPassword(!showPassword)}>
-              <img 
-                src={showPassword ? "/images/after.png" : "/images/before.png"} 
-                alt="toggle password visibility" 
+              <img
+                src={showPassword ? "/images/after.png" : "/images/before.png"}
+                alt="toggle password visibility"
                 style={{ width: "20px", height: "16px" }}
               />
             </TogglePassword>

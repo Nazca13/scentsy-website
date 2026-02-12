@@ -7,11 +7,9 @@ import LandingPage from "./pages/LandingPage";
 import Login from './pages/Login';
 import Register from "./pages/Register";
 import Collection from "./pages/Collection";
-import New from "./pages/New";
 import Sale from "./pages/Sale";
 import ProductPage from "./pages/ProductPage";
-import ProductDetail from "./pages/ProductDetail";
-import Profile from "./pages/profile";
+import ProfilePage from "./pages/ProfilePage";
 import Cart from "./pages/Cart";
 import AboutPage from "./pages/AboutPage";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -46,59 +44,67 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/about" element={<AboutPage />} />
 
-      {/* Protected Routes - untuk user yang sudah login */}
-      <Route path="/homepage" element={
-        <ProtectedRoute>
-          <HomePage />
-        </ProtectedRoute>
-      } />
-      <Route path="/collection" element={
-        <ProtectedRoute>
-          <Collection />
-        </ProtectedRoute>
-      } />
-      <Route path="/new" element={
-        <ProtectedRoute>
-          <New />
-        </ProtectedRoute>
-      } />
-      <Route path="/sale" element={
-        <ProtectedRoute>
-          <Sale />
-        </ProtectedRoute>
-      } />
-      <Route path="/product/:id" element={
-        <ProtectedRoute>
-          <ProductPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/product/:productId" element={
-        <ProtectedRoute>
-          <ProductDetail />
-        </ProtectedRoute>
-      } />
-      <Route path="/profile" element={
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>
-      } />
-      <Route path="/cart" element={
-        <ProtectedRoute>
-          <Cart />
-        </ProtectedRoute>
-      } />
+      {/* Protected Routes */}
+      <Route
+        path="/homepage"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/product/:id"
+        element={
+          <ProtectedRoute>
+            <ProductPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/collection"
+        element={
+          <ProtectedRoute>
+            <Collection />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sale"
+        element={
+          <ProtectedRoute>
+            <Sale />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Admin Only Routes */}
-      <Route path="/admin" element={
-        <ProtectedRoute requiredRole="admin">
-          <AdminDashboard />
-        </ProtectedRoute>
-      } />
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Redirect /admin/product ke /admin supaya tidak error */}
-      <Route path="/admin/product" element={<Navigate to="/admin" replace />} />
-
-      {/* Fallback route */}
+      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -1,10 +1,11 @@
 // src/pages/HomePage.jsx
 import React from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
+import productsData from "../data/products-data";
 
 const LoaderOverlay = styled.div`
   position: fixed;
@@ -86,6 +87,12 @@ const Card = styled.div`
   flex-direction: column;
   font-size: 10px;
   width: 220px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
 `;
 
 const ProductImageWrapper = styled.div`
@@ -130,6 +137,10 @@ const ProductDescription = styled.p`
   color: #ccc;
   margin: 2px 0;
   text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 const DescriptionRow = styled.div`
@@ -178,7 +189,7 @@ const BuyButton = styled.button`
   background: #d6b341;
   color: black;
   border: none;
-  padding: 10px 20px;
+  padding: 6px 12px;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
@@ -203,23 +214,29 @@ const HomePage = () => {
   }
 
   if (error) {
-    return <ErrorMessage>{error}</ErrorMessage>;
+    return (
+      <PageContainer>
+        <Navbar />
+        <ErrorMessage>{error}</ErrorMessage>
+        <Footer />
+      </PageContainer>
+    );
   }
 
   return (
     <PageContainer>
       <Navbar />
-      <section style={{ padding: "40px" }}>
-        <h2>New Arrival</h2>
+      <section style={{ padding: "40px 20px" }}>
+        <h2 style={{ color: "#d6b341", textAlign: "center", marginBottom: "30px", fontSize: "2rem" }}>New Arrivals</h2>
         {products.length === 0 ? (
-          <p>Tidak ada produk</p>
+          <p style={{ textAlign: "center" }}>Tidak ada produk</p>
         ) : (
           <ProductGrid>
             {products.map((product) => (
               <Card key={product._id} onClick={() => navigate(`/product/${product._id}`)}>
                 <ProductImageWrapper>
                   {product.discount && <DiscountBadge>{product.discount}</DiscountBadge>}
-                  <ProductImage src={`${import.meta.env.VITE_API_BASE_URL}${product.image}`} alt={product.name} />
+                  <ProductImage src={product.image} alt={product.name} />
                 </ProductImageWrapper>
                 <ProductInfo>
                   <ProductName>{product.name}</ProductName>
@@ -229,8 +246,10 @@ const HomePage = () => {
                   </DescriptionRow>
                   <Rating>★ {product.rating} <span>({product.ratingCount})</span></Rating>
                   <BottomWrapper>
-                    <OldPrice>${product.originalPrice.toFixed(2)}</OldPrice>
-                    <NewPrice>${product.price.toFixed(2)}</NewPrice>
+                    <div>
+                      {product.originalPrice && <OldPrice>${product.originalPrice}</OldPrice>}
+                      <NewPrice>${product.price}</NewPrice>
+                    </div>
                     <BuyButton>BUY NOW</BuyButton>
                   </BottomWrapper>
                 </ProductInfo>

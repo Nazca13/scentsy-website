@@ -4,21 +4,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 const FooterContainer = styled.footer`
-background-color: #091018;
-padding: 60px;
+  background-color: #090909;
+  padding: 60px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   font-size: 12px;
-  border-top: 0.5px solid #333;
-`;
-
-const FooterTopBar = styled.div`
-  width: 1100px;
-  height: 1px;
-  background-color: white;
-  margin: 0 auto 30px auto;
-  border-radius: 1px;
+  border-top: 1px solid #333;
 `;
 
 const Column = styled.div`
@@ -29,7 +21,7 @@ const Column = styled.div`
 `;
 
 const FooterHeading = styled.h4`
-  color: #D6B341;
+  color: #D6B341; // Using the gold color for headings as seen in LandingPage
   margin-bottom: 20px;
 `;
 
@@ -78,18 +70,16 @@ const Copyright = styled.p`
   margin-top: 30px;
   font-size: 12px;
   color: #D6B341;
-  text-align: center;
-  padding-top: 20px;
-  border-top: 0.5px solid #333;
+  text-align: left; // Match LandingPage specific alignment if needed, usually center or left
+  margin-left: 20px;
 `;
 
 const Footer = () => {
   return (
     <FooterContainer>
-      <FooterTopBar />
       <Column>
         <FooterHeading>Scentsy: The Perfect Fragrance For You</FooterHeading>
-        <p>
+        <p style={{ color: '#F5F5F5' }}>
           Scentsy is a global luxury fragrance brand committed to delivering elegant, refined scents that embody depth, quality, and personal expression. Each fragrance is carefully crafted with premium ingredients and an artistic approach, offering a signature experience that is both timeless and unforgettable.
           <br /><br />
           At Scentsy, we believe that fragrance is more than a scent – it's a story, a feeling, and a reflection of who you are. With a passion for creating "The Perfect Fragrance for You," we design each perfume to feel personal, yet universally luxurious. Our collections blend tradition and innovation, resulting in sophisticated compositions with lasting power and distinct identity.

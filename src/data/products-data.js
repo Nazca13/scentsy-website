@@ -12,7 +12,7 @@ const products = [
     rating: "4.9",
     ratingCount: 634,
     gender: "women",
-    category: "best-seller",
+    category: "new",
     notes: {
       top: "Blackcurrant, Saffron, Pink Pepper",
       heart: "Night-Blooming Jasmine, Damask Rose, Violet Leaf",
@@ -117,7 +117,7 @@ const products = [
     rating: "4.9",
     ratingCount: 579,
     gender: "women",
-    category: "luxury",
+    category: "new",
     notes: {
       top: " Sicilian Lemon, Pink Pepper, Bergamot",
       heart: "Clary Sage, Neroli, White Tea",
@@ -179,7 +179,7 @@ const products = [
     rating: "4.9",
     ratingCount: 561,
     gender: "women",
-    category: "luxury",
+    category: "new",
     notes: {
       top: "Peach Nectar, Neroli, Mandarin",
       heart: " Ylang-Ylang, Tuberose, Rose Absolute",
@@ -199,7 +199,7 @@ const products = [
     rating: "4.9",
     ratingCount: 446,
     gender: "women",
-    category: "party",
+    category: "new",
     notes: {
       top: "Black plum, cinnamon",
       heart: "Tuberose, incense, red wine accord",
@@ -219,7 +219,7 @@ const products = [
     rating: "4.9",
     ratingCount: 411,
     gender: "men",
-    category: "luxury",
+    category: "new",
     notes: {
       top: "Mandarin, Saffron, Nutmeg",
       heart: "Suede Leather, Orris Butter, Labdanum",
@@ -239,7 +239,7 @@ const products = [
     rating: "4.9",
     ratingCount: 399,
     gender: "women",
-    category: "day",
+    category: "new",
     notes: {
       top: "Pear Blossom, Aldehydes, Bergamot",
       heart: " White Peony, Jasmine Tea, Lily of the Valley",
